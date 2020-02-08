@@ -1,0 +1,218 @@
+using System;
+using System.Collections.Generic;
+using AngleSharp.Css.Dom;
+using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+using AngleSharp.Io.Dom;
+using AngleSharp.Media.Dom;
+using AngleSharp.Svg.Dom;
+namespace AngleSharpWrappers
+{
+    #nullable enable
+    public static partial class WrapperFactory
+    {
+
+        /// <summary>
+        /// Wraps an <see cref="INode"/> in the wrapper specific to it.
+        /// </summary>
+        /// <typeparam name="T">The node type.</typeparam>
+        /// <param name="initialObject">The initial node object to wrap</param>
+        /// <param name="objectQuery">A query method for refreshing the wrapped node object.</param>
+        /// <returns>The <see cref="IWrapper"/> wrapped node.</returns>
+        public static IWrapper NodeWrapperFactory<T>(T initialObject, Func<T?> objectQuery) where T : class, INode
+        {
+            return initialObject switch
+            {
+                IComment comment => new CommentWrapper(comment, objectQuery),
+                IDocumentType documentType => new DocumentTypeWrapper(documentType, objectQuery),
+                IHtmlAnchorElement htmlAnchorElement => new HtmlAnchorElementWrapper(htmlAnchorElement, objectQuery),
+                IHtmlAreaElement htmlAreaElement => new HtmlAreaElementWrapper(htmlAreaElement, objectQuery),
+                IHtmlAudioElement htmlAudioElement => new HtmlAudioElementWrapper(htmlAudioElement, objectQuery),
+                IHtmlBaseElement htmlBaseElement => new HtmlBaseElementWrapper(htmlBaseElement, objectQuery),
+                IHtmlBodyElement htmlBodyElement => new HtmlBodyElementWrapper(htmlBodyElement, objectQuery),
+                IHtmlBreakRowElement htmlBreakRowElement => new HtmlBreakRowElementWrapper(htmlBreakRowElement, objectQuery),
+                IHtmlButtonElement htmlButtonElement => new HtmlButtonElementWrapper(htmlButtonElement, objectQuery),
+                IHtmlCanvasElement htmlCanvasElement => new HtmlCanvasElementWrapper(htmlCanvasElement, objectQuery),
+                IHtmlCommandElement htmlCommandElement => new HtmlCommandElementWrapper(htmlCommandElement, objectQuery),
+                IHtmlDataElement htmlDataElement => new HtmlDataElementWrapper(htmlDataElement, objectQuery),
+                IHtmlDataListElement htmlDataListElement => new HtmlDataListElementWrapper(htmlDataListElement, objectQuery),
+                IHtmlDetailsElement htmlDetailsElement => new HtmlDetailsElementWrapper(htmlDetailsElement, objectQuery),
+                IHtmlDialogElement htmlDialogElement => new HtmlDialogElementWrapper(htmlDialogElement, objectQuery),
+                IHtmlDivElement htmlDivElement => new HtmlDivElementWrapper(htmlDivElement, objectQuery),
+                IHtmlDocument htmlDocument => new HtmlDocumentWrapper(htmlDocument, objectQuery),
+                IHtmlEmbedElement htmlEmbedElement => new HtmlEmbedElementWrapper(htmlEmbedElement, objectQuery),
+                IHtmlFieldSetElement htmlFieldSetElement => new HtmlFieldSetElementWrapper(htmlFieldSetElement, objectQuery),
+                IHtmlFormElement htmlFormElement => new HtmlFormElementWrapper(htmlFormElement, objectQuery),
+                IHtmlHeadElement htmlHeadElement => new HtmlHeadElementWrapper(htmlHeadElement, objectQuery),
+                IHtmlHeadingElement htmlHeadingElement => new HtmlHeadingElementWrapper(htmlHeadingElement, objectQuery),
+                IHtmlHrElement htmlHrElement => new HtmlHrElementWrapper(htmlHrElement, objectQuery),
+                IHtmlHtmlElement htmlHtmlElement => new HtmlHtmlElementWrapper(htmlHtmlElement, objectQuery),
+                IHtmlImageElement htmlImageElement => new HtmlImageElementWrapper(htmlImageElement, objectQuery),
+                IHtmlInlineFrameElement htmlInlineFrameElement => new HtmlInlineFrameElementWrapper(htmlInlineFrameElement, objectQuery),
+                IHtmlInputElement htmlInputElement => new HtmlInputElementWrapper(htmlInputElement, objectQuery),
+                IHtmlKeygenElement htmlKeygenElement => new HtmlKeygenElementWrapper(htmlKeygenElement, objectQuery),
+                IHtmlLabelElement htmlLabelElement => new HtmlLabelElementWrapper(htmlLabelElement, objectQuery),
+                IHtmlLegendElement htmlLegendElement => new HtmlLegendElementWrapper(htmlLegendElement, objectQuery),
+                IHtmlLinkElement htmlLinkElement => new HtmlLinkElementWrapper(htmlLinkElement, objectQuery),
+                IHtmlListItemElement htmlListItemElement => new HtmlListItemElementWrapper(htmlListItemElement, objectQuery),
+                IHtmlMapElement htmlMapElement => new HtmlMapElementWrapper(htmlMapElement, objectQuery),
+                IHtmlMarqueeElement htmlMarqueeElement => new HtmlMarqueeElementWrapper(htmlMarqueeElement, objectQuery),
+                IHtmlMenuElement htmlMenuElement => new HtmlMenuElementWrapper(htmlMenuElement, objectQuery),
+                IHtmlMenuItemElement htmlMenuItemElement => new HtmlMenuItemElementWrapper(htmlMenuItemElement, objectQuery),
+                IHtmlMetaElement htmlMetaElement => new HtmlMetaElementWrapper(htmlMetaElement, objectQuery),
+                IHtmlMeterElement htmlMeterElement => new HtmlMeterElementWrapper(htmlMeterElement, objectQuery),
+                IHtmlModElement htmlModElement => new HtmlModElementWrapper(htmlModElement, objectQuery),
+                IHtmlObjectElement htmlObjectElement => new HtmlObjectElementWrapper(htmlObjectElement, objectQuery),
+                IHtmlOptionElement htmlOptionElement => new HtmlOptionElementWrapper(htmlOptionElement, objectQuery),
+                IHtmlOptionsGroupElement htmlOptionsGroupElement => new HtmlOptionsGroupElementWrapper(htmlOptionsGroupElement, objectQuery),
+                IHtmlOrderedListElement htmlOrderedListElement => new HtmlOrderedListElementWrapper(htmlOrderedListElement, objectQuery),
+                IHtmlOutputElement htmlOutputElement => new HtmlOutputElementWrapper(htmlOutputElement, objectQuery),
+                IHtmlParagraphElement htmlParagraphElement => new HtmlParagraphElementWrapper(htmlParagraphElement, objectQuery),
+                IHtmlParamElement htmlParamElement => new HtmlParamElementWrapper(htmlParamElement, objectQuery),
+                IHtmlPreElement htmlPreElement => new HtmlPreElementWrapper(htmlPreElement, objectQuery),
+                IHtmlProgressElement htmlProgressElement => new HtmlProgressElementWrapper(htmlProgressElement, objectQuery),
+                IHtmlQuoteElement htmlQuoteElement => new HtmlQuoteElementWrapper(htmlQuoteElement, objectQuery),
+                IHtmlScriptElement htmlScriptElement => new HtmlScriptElementWrapper(htmlScriptElement, objectQuery),
+                IHtmlSelectElement htmlSelectElement => new HtmlSelectElementWrapper(htmlSelectElement, objectQuery),
+                IHtmlSlotElement htmlSlotElement => new HtmlSlotElementWrapper(htmlSlotElement, objectQuery),
+                IHtmlSourceElement htmlSourceElement => new HtmlSourceElementWrapper(htmlSourceElement, objectQuery),
+                IHtmlSpanElement htmlSpanElement => new HtmlSpanElementWrapper(htmlSpanElement, objectQuery),
+                IHtmlStyleElement htmlStyleElement => new HtmlStyleElementWrapper(htmlStyleElement, objectQuery),
+                IHtmlTableCaptionElement htmlTableCaptionElement => new HtmlTableCaptionElementWrapper(htmlTableCaptionElement, objectQuery),
+                IHtmlTableColumnElement htmlTableColumnElement => new HtmlTableColumnElementWrapper(htmlTableColumnElement, objectQuery),
+                IHtmlTableDataCellElement htmlTableDataCellElement => new HtmlTableDataCellElementWrapper(htmlTableDataCellElement, objectQuery),
+                IHtmlTableElement htmlTableElement => new HtmlTableElementWrapper(htmlTableElement, objectQuery),
+                IHtmlTableHeaderCellElement htmlTableHeaderCellElement => new HtmlTableHeaderCellElementWrapper(htmlTableHeaderCellElement, objectQuery),
+                IHtmlTableRowElement htmlTableRowElement => new HtmlTableRowElementWrapper(htmlTableRowElement, objectQuery),
+                IHtmlTableSectionElement htmlTableSectionElement => new HtmlTableSectionElementWrapper(htmlTableSectionElement, objectQuery),
+                IHtmlTemplateElement htmlTemplateElement => new HtmlTemplateElementWrapper(htmlTemplateElement, objectQuery),
+                IHtmlTextAreaElement htmlTextAreaElement => new HtmlTextAreaElementWrapper(htmlTextAreaElement, objectQuery),
+                IHtmlTimeElement htmlTimeElement => new HtmlTimeElementWrapper(htmlTimeElement, objectQuery),
+                IHtmlTitleElement htmlTitleElement => new HtmlTitleElementWrapper(htmlTitleElement, objectQuery),
+                IHtmlTrackElement htmlTrackElement => new HtmlTrackElementWrapper(htmlTrackElement, objectQuery),
+                IHtmlUnknownElement htmlUnknownElement => new HtmlUnknownElementWrapper(htmlUnknownElement, objectQuery),
+                IHtmlUnorderedListElement htmlUnorderedListElement => new HtmlUnorderedListElementWrapper(htmlUnorderedListElement, objectQuery),
+                IHtmlVideoElement htmlVideoElement => new HtmlVideoElementWrapper(htmlVideoElement, objectQuery),
+                IProcessingInstruction processingInstruction => new ProcessingInstructionWrapper(processingInstruction, objectQuery),
+                IPseudoElement pseudoElement => new PseudoElementWrapper(pseudoElement, objectQuery),
+                IShadowRoot shadowRoot => new ShadowRootWrapper(shadowRoot, objectQuery),
+                ISvgCircleElement svgCircleElement => new SvgCircleElementWrapper(svgCircleElement, objectQuery),
+                ISvgDescriptionElement svgDescriptionElement => new SvgDescriptionElementWrapper(svgDescriptionElement, objectQuery),
+                ISvgForeignObjectElement svgForeignObjectElement => new SvgForeignObjectElementWrapper(svgForeignObjectElement, objectQuery),
+                ISvgSvgElement svgSvgElement => new SvgSvgElementWrapper(svgSvgElement, objectQuery),
+                ISvgTitleElement svgTitleElement => new SvgTitleElementWrapper(svgTitleElement, objectQuery),
+                IText text => new TextWrapper(text, objectQuery),
+                IDocument document => new DocumentWrapper(document, objectQuery),
+                IDocumentFragment documentFragment => new DocumentFragmentWrapper(documentFragment, objectQuery),
+                IHtmlMediaElement htmlMediaElement => new HtmlMediaElementWrapper(htmlMediaElement, objectQuery),
+                IHtmlTableCellElement htmlTableCellElement => new HtmlTableCellElementWrapper(htmlTableCellElement, objectQuery),
+                ICharacterData characterData => new CharacterDataWrapper(characterData, objectQuery),
+                ISvgElement svgElement => new SvgElementWrapper(svgElement, objectQuery),
+                IHtmlElement htmlElement => new HtmlElementWrapper(htmlElement, objectQuery),
+                IElement element => new ElementWrapper(element, objectQuery),
+                INode node => new NodeWrapper(node, objectQuery),
+                _ => new NodeWrapper(initialObject, objectQuery)
+            };
+        }
+        /// <summary>
+        /// Unwraps a wrapped node.
+        /// </summary>
+        /// <param name="wrapperOrNode">Node to unwrap.</param>
+        /// <returns>The unwrapped <see cref="INode"/>.</returns>
+        public static INode Unwrap(this INode wrapperOrNode)
+        {
+            return wrapperOrNode switch
+            {
+                CommentWrapper comment => comment.WrappedObject,
+                DocumentTypeWrapper documentType => documentType.WrappedObject,
+                HtmlAnchorElementWrapper htmlAnchorElement => htmlAnchorElement.WrappedObject,
+                HtmlAreaElementWrapper htmlAreaElement => htmlAreaElement.WrappedObject,
+                HtmlAudioElementWrapper htmlAudioElement => htmlAudioElement.WrappedObject,
+                HtmlBaseElementWrapper htmlBaseElement => htmlBaseElement.WrappedObject,
+                HtmlBodyElementWrapper htmlBodyElement => htmlBodyElement.WrappedObject,
+                HtmlBreakRowElementWrapper htmlBreakRowElement => htmlBreakRowElement.WrappedObject,
+                HtmlButtonElementWrapper htmlButtonElement => htmlButtonElement.WrappedObject,
+                HtmlCanvasElementWrapper htmlCanvasElement => htmlCanvasElement.WrappedObject,
+                HtmlCommandElementWrapper htmlCommandElement => htmlCommandElement.WrappedObject,
+                HtmlDataElementWrapper htmlDataElement => htmlDataElement.WrappedObject,
+                HtmlDataListElementWrapper htmlDataListElement => htmlDataListElement.WrappedObject,
+                HtmlDetailsElementWrapper htmlDetailsElement => htmlDetailsElement.WrappedObject,
+                HtmlDialogElementWrapper htmlDialogElement => htmlDialogElement.WrappedObject,
+                HtmlDivElementWrapper htmlDivElement => htmlDivElement.WrappedObject,
+                HtmlDocumentWrapper htmlDocument => htmlDocument.WrappedObject,
+                HtmlEmbedElementWrapper htmlEmbedElement => htmlEmbedElement.WrappedObject,
+                HtmlFieldSetElementWrapper htmlFieldSetElement => htmlFieldSetElement.WrappedObject,
+                HtmlFormElementWrapper htmlFormElement => htmlFormElement.WrappedObject,
+                HtmlHeadElementWrapper htmlHeadElement => htmlHeadElement.WrappedObject,
+                HtmlHeadingElementWrapper htmlHeadingElement => htmlHeadingElement.WrappedObject,
+                HtmlHrElementWrapper htmlHrElement => htmlHrElement.WrappedObject,
+                HtmlHtmlElementWrapper htmlHtmlElement => htmlHtmlElement.WrappedObject,
+                HtmlImageElementWrapper htmlImageElement => htmlImageElement.WrappedObject,
+                HtmlInlineFrameElementWrapper htmlInlineFrameElement => htmlInlineFrameElement.WrappedObject,
+                HtmlInputElementWrapper htmlInputElement => htmlInputElement.WrappedObject,
+                HtmlKeygenElementWrapper htmlKeygenElement => htmlKeygenElement.WrappedObject,
+                HtmlLabelElementWrapper htmlLabelElement => htmlLabelElement.WrappedObject,
+                HtmlLegendElementWrapper htmlLegendElement => htmlLegendElement.WrappedObject,
+                HtmlLinkElementWrapper htmlLinkElement => htmlLinkElement.WrappedObject,
+                HtmlListItemElementWrapper htmlListItemElement => htmlListItemElement.WrappedObject,
+                HtmlMapElementWrapper htmlMapElement => htmlMapElement.WrappedObject,
+                HtmlMarqueeElementWrapper htmlMarqueeElement => htmlMarqueeElement.WrappedObject,
+                HtmlMenuElementWrapper htmlMenuElement => htmlMenuElement.WrappedObject,
+                HtmlMenuItemElementWrapper htmlMenuItemElement => htmlMenuItemElement.WrappedObject,
+                HtmlMetaElementWrapper htmlMetaElement => htmlMetaElement.WrappedObject,
+                HtmlMeterElementWrapper htmlMeterElement => htmlMeterElement.WrappedObject,
+                HtmlModElementWrapper htmlModElement => htmlModElement.WrappedObject,
+                HtmlObjectElementWrapper htmlObjectElement => htmlObjectElement.WrappedObject,
+                HtmlOptionElementWrapper htmlOptionElement => htmlOptionElement.WrappedObject,
+                HtmlOptionsGroupElementWrapper htmlOptionsGroupElement => htmlOptionsGroupElement.WrappedObject,
+                HtmlOrderedListElementWrapper htmlOrderedListElement => htmlOrderedListElement.WrappedObject,
+                HtmlOutputElementWrapper htmlOutputElement => htmlOutputElement.WrappedObject,
+                HtmlParagraphElementWrapper htmlParagraphElement => htmlParagraphElement.WrappedObject,
+                HtmlParamElementWrapper htmlParamElement => htmlParamElement.WrappedObject,
+                HtmlPreElementWrapper htmlPreElement => htmlPreElement.WrappedObject,
+                HtmlProgressElementWrapper htmlProgressElement => htmlProgressElement.WrappedObject,
+                HtmlQuoteElementWrapper htmlQuoteElement => htmlQuoteElement.WrappedObject,
+                HtmlScriptElementWrapper htmlScriptElement => htmlScriptElement.WrappedObject,
+                HtmlSelectElementWrapper htmlSelectElement => htmlSelectElement.WrappedObject,
+                HtmlSlotElementWrapper htmlSlotElement => htmlSlotElement.WrappedObject,
+                HtmlSourceElementWrapper htmlSourceElement => htmlSourceElement.WrappedObject,
+                HtmlSpanElementWrapper htmlSpanElement => htmlSpanElement.WrappedObject,
+                HtmlStyleElementWrapper htmlStyleElement => htmlStyleElement.WrappedObject,
+                HtmlTableCaptionElementWrapper htmlTableCaptionElement => htmlTableCaptionElement.WrappedObject,
+                HtmlTableColumnElementWrapper htmlTableColumnElement => htmlTableColumnElement.WrappedObject,
+                HtmlTableDataCellElementWrapper htmlTableDataCellElement => htmlTableDataCellElement.WrappedObject,
+                HtmlTableElementWrapper htmlTableElement => htmlTableElement.WrappedObject,
+                HtmlTableHeaderCellElementWrapper htmlTableHeaderCellElement => htmlTableHeaderCellElement.WrappedObject,
+                HtmlTableRowElementWrapper htmlTableRowElement => htmlTableRowElement.WrappedObject,
+                HtmlTableSectionElementWrapper htmlTableSectionElement => htmlTableSectionElement.WrappedObject,
+                HtmlTemplateElementWrapper htmlTemplateElement => htmlTemplateElement.WrappedObject,
+                HtmlTextAreaElementWrapper htmlTextAreaElement => htmlTextAreaElement.WrappedObject,
+                HtmlTimeElementWrapper htmlTimeElement => htmlTimeElement.WrappedObject,
+                HtmlTitleElementWrapper htmlTitleElement => htmlTitleElement.WrappedObject,
+                HtmlTrackElementWrapper htmlTrackElement => htmlTrackElement.WrappedObject,
+                HtmlUnknownElementWrapper htmlUnknownElement => htmlUnknownElement.WrappedObject,
+                HtmlUnorderedListElementWrapper htmlUnorderedListElement => htmlUnorderedListElement.WrappedObject,
+                HtmlVideoElementWrapper htmlVideoElement => htmlVideoElement.WrappedObject,
+                ProcessingInstructionWrapper processingInstruction => processingInstruction.WrappedObject,
+                PseudoElementWrapper pseudoElement => pseudoElement.WrappedObject,
+                ShadowRootWrapper shadowRoot => shadowRoot.WrappedObject,
+                SvgCircleElementWrapper svgCircleElement => svgCircleElement.WrappedObject,
+                SvgDescriptionElementWrapper svgDescriptionElement => svgDescriptionElement.WrappedObject,
+                SvgForeignObjectElementWrapper svgForeignObjectElement => svgForeignObjectElement.WrappedObject,
+                SvgSvgElementWrapper svgSvgElement => svgSvgElement.WrappedObject,
+                SvgTitleElementWrapper svgTitleElement => svgTitleElement.WrappedObject,
+                TextWrapper text => text.WrappedObject,
+                DocumentWrapper document => document.WrappedObject,
+                DocumentFragmentWrapper documentFragment => documentFragment.WrappedObject,
+                HtmlMediaElementWrapper htmlMediaElement => htmlMediaElement.WrappedObject,
+                HtmlTableCellElementWrapper htmlTableCellElement => htmlTableCellElement.WrappedObject,
+                CharacterDataWrapper characterData => characterData.WrappedObject,
+                SvgElementWrapper svgElement => svgElement.WrappedObject,
+                HtmlElementWrapper htmlElement => htmlElement.WrappedObject,
+                ElementWrapper element => element.WrappedObject,
+                NodeWrapper node => node.WrappedObject,
+                _ => wrapperOrNode
+            };
+        }
+    }
+}

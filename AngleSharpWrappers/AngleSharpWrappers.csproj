@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <DebugType>Full</DebugType>
+    <IsTestProject>false</IsTestProject>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>Egil Hansen</Authors>
+    <Company>Egil Hansen</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/egil/AngleSharp.Wrappers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/egil/AngleSharp.Wrappers</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageId>AngleSharp.Wrappers</PackageId>
+    <Product>AngleSharp.Wrappers</Product>
+    <Version>1.0.0-beta-1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.13.0" />
+    <PackageReference Include="AngleSharp.Css" Version="0.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Generated\" />
+  </ItemGroup>
+
+</Project>

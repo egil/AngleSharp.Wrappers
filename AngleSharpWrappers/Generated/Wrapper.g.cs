@@ -21,7 +21,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new AttrWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new AttrWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IAttr)result;
@@ -38,7 +41,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new AudioTrackListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new AudioTrackListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IAudioTrackList)result;
@@ -55,7 +61,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new FileListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new FileListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IFileList)result;
@@ -72,7 +81,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new HtmlAllCollectionWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new HtmlAllCollectionWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IHtmlAllCollection)result;
@@ -89,7 +101,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new HtmlFormControlsCollectionWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new HtmlFormControlsCollectionWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IHtmlFormControlsCollection)result;
@@ -106,7 +121,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new HtmlOptionsCollectionWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new HtmlOptionsCollectionWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IHtmlOptionsCollection)result;
@@ -123,7 +141,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new MediaListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new MediaListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IMediaList)result;
@@ -140,7 +161,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new NamedNodeMapWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new NamedNodeMapWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (INamedNodeMap)result;
@@ -157,7 +181,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new NodeListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new NodeListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (INodeList)result;
@@ -174,7 +201,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new SettableTokenListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new SettableTokenListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (ISettableTokenList)result;
@@ -191,7 +221,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new StringListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new StringListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IStringList)result;
@@ -208,7 +241,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new StringMapWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new StringMapWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IStringMap)result;
@@ -225,7 +261,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new StyleSheetListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new StyleSheetListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IStyleSheetList)result;
@@ -242,7 +281,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new TextTrackCueListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new TextTrackCueListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (ITextTrackCueList)result;
@@ -259,7 +301,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new TextTrackListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new TextTrackListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (ITextTrackList)result;
@@ -276,7 +321,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new TokenListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new TokenListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (ITokenList)result;
@@ -293,7 +341,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new VideoTrackListWrapper(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new VideoTrackListWrapper(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IVideoTrackList)result;
@@ -310,7 +361,10 @@ namespace AngleSharpWrappers
             {
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
-                result = new HtmlCollectionWrapper<T>(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = new HtmlCollectionWrapper<T>(initialObject, objectQuery);
+                }
                 Wrappers.Add(key, result);
             }
             return (IHtmlCollection<T>)result;

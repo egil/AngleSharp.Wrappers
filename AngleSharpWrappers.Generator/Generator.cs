@@ -69,7 +69,10 @@ namespace AngleSharpWrappers.Generator
                 output.AppendLine($"{space,12}{{");
                 output.AppendLine($"{space,16}var initialObject = objectQuery();");
                 output.AppendLine($"{space,16}if (initialObject is null) return default;");
-                output.AppendLine($"{space,16}result = new {wrapperName}(initialObject, objectQuery);");
+                output.AppendLine($"{space,16}if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))");
+                output.AppendLine($"{space,16}{{");
+                output.AppendLine($"{space,20}result = new {wrapperName}(initialObject, objectQuery);");
+                output.AppendLine($"{space,16}}}");
                 output.AppendLine($"{space,16}Wrappers.Add(key, result);");
                 output.AppendLine($"{space,12}}}");
                 output.AppendLine($"{space,12}return ({type.Name})result;");
@@ -110,7 +113,10 @@ namespace AngleSharpWrappers.Generator
                 output.AppendLine($"{space,12}{{");
                 output.AppendLine($"{space,16}var initialObject = objectQuery();");
                 output.AppendLine($"{space,16}if (initialObject is null) return default;");
-                output.AppendLine($"{space,16}result = new {wrapperName}<T>(initialObject, objectQuery);");
+                output.AppendLine($"{space,16}if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))");
+                output.AppendLine($"{space,16}{{");
+                output.AppendLine($"{space,20}result = new {wrapperName}<T>(initialObject, objectQuery);");
+                output.AppendLine($"{space,16}}}");
                 output.AppendLine($"{space,16}Wrappers.Add(key, result);");
                 output.AppendLine($"{space,12}}}");
                 output.AppendLine($"{space,12}return ({typeName}<T>)result;");

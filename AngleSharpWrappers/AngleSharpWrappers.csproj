@@ -17,12 +17,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.13.0" />
-    <PackageReference Include="AngleSharp.Css" Version="0.13.0" />
+    <!--<PackageReference Include="AngleSharp" Version="0.13.0" />-->
+    <!--<PackageReference Include="AngleSharp.Css" Version="0.13.0" />-->
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Generated\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\repos\AngleSharp\src\AngleSharp\AngleSharp.Core.csproj" />
   </ItemGroup>
 
 </Project>

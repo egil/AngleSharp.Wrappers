@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp.Css" Version="0.13.0" />
+    <!--<PackageReference Include="AngleSharp.Css" Version="0.13.0" />-->
     <PackageReference Include="coverlet.collector" Version="1.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\repos\AngleSharp\src\AngleSharp\AngleSharp.Core.csproj" />
     <ProjectReference Include="..\AngleSharpWrappers\AngleSharpWrappers.csproj" />
   </ItemGroup>
 

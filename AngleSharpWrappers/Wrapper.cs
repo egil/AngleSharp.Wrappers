@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
@@ -7,6 +8,12 @@ using AngleSharpWrappers;
 
 namespace AngleSharpWrappers
 {
+    internal static class Wrapper
+    {
+        public static readonly ConcurrentDictionary<object, IWrapper> WrapperCache = new ConcurrentDictionary<object, IWrapper>();
+    }
+
+
     /// <summary>
     /// Represents a wrapper class.
     /// </summary>
@@ -31,9 +38,9 @@ namespace AngleSharpWrappers
                     if (target is null)
                         throw new NodeNoLongerAvailableException();
 
-                    if(target is TWrapped wrappedObject)
+                    if (target is TWrapped wrappedObject)
                         _wrappedObject = wrappedObject;
-                    else 
+                    else
                         throw new InvalidOperationException("The GetTargetObject func did not return the expected wrapped object type.");
                 }
                 return _wrappedObject!;
@@ -52,6 +59,9 @@ namespace AngleSharpWrappers
 
             _getTargetObject = getTargetObject;
             _wrappedObject = initialTargetObject;
+            var added = Wrapper.WrapperCache.TryAdd(initialTargetObject, this);
+            if(!added)
+                throw new Exception("WRAPPER ADDED IN ANOTHER THREAD!");
         }
 
         /// <summary>
@@ -59,10 +69,13 @@ namespace AngleSharpWrappers
         /// </summary>
         public void MarkAsStale()
         {
+            if (_wrappedObject is { })
+                Wrapper.WrapperCache.TryRemove(_wrappedObject, out var _);
+
             _wrappedObject = null;
             foreach (var wrapped in Wrappers.Values) wrapped.MarkAsStale();
         }
-        
+
         protected T? GetOrWrap<T>(int key, Func<T?> objectQuery) where T : class, INode
         {
             if (objectQuery is null) throw new ArgumentNullException(nameof(objectQuery));
@@ -73,7 +86,11 @@ namespace AngleSharpWrappers
                 var initialObject = objectQuery();
                 if (initialObject is null) return default;
 
-                result = WrapperFactory.NodeWrapperFactory(initialObject, objectQuery);
+                if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))
+                {
+                    result = WrapperFactory.NodeWrapperFactory(initialObject, objectQuery);
+                }
+
                 Wrappers.Add(key, result);
             }
 

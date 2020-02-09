@@ -14,49 +14,40 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="NamedNodeMapWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public NamedNodeMapWrapper(INamedNodeMap initialObject, Func<INamedNodeMap> getObject) : base(initialObject, getObject) { }
+        internal NamedNodeMapWrapper(WrapperFactory factory, INamedNodeMap initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
-        public IAttr this[Int32 index] { get => GetOrWrap(HashCode.Combine("this+System.Int32", index), () => WrappedObject[index]); }
+        public IAttr this[Int32 index] { get => GetOrWrap(() => WrappedObject[index]); }
 
         /// <inheritdoc/>
-        public IAttr this[String name] { get => GetOrWrap(HashCode.Combine("this+System.String", name), () => WrappedObject[name]); }
+        public IAttr this[String name] { get => GetOrWrap(() => WrappedObject[name]); }
 
         /// <inheritdoc/>
         public Int32 Length { get => WrappedObject.Length; }
 
         /// <inheritdoc/>
         public IAttr GetNamedItem(String name)
-            => GetOrWrap(HashCode.Combine(nameof(GetNamedItem), name), () => WrappedObject.GetNamedItem(name));
+            => GetOrWrap(() => WrappedObject.GetNamedItem(name));
 
         /// <inheritdoc/>
         public IAttr GetNamedItem(String namespaceUri, String localName)
-            => GetOrWrap(HashCode.Combine(nameof(GetNamedItem), namespaceUri, localName), () => WrappedObject.GetNamedItem(namespaceUri, localName));
+            => GetOrWrap(() => WrappedObject.GetNamedItem(namespaceUri, localName));
 
         /// <inheritdoc/>
         public IAttr RemoveNamedItem(String name)
-            => GetOrWrap(HashCode.Combine(nameof(RemoveNamedItem), name), () => WrappedObject.RemoveNamedItem(name));
+            => GetOrWrap(() => WrappedObject.RemoveNamedItem(name));
 
         /// <inheritdoc/>
         public IAttr RemoveNamedItem(String namespaceUri, String localName)
-            => GetOrWrap(HashCode.Combine(nameof(RemoveNamedItem), namespaceUri, localName), () => WrappedObject.RemoveNamedItem(namespaceUri, localName));
+            => GetOrWrap(() => WrappedObject.RemoveNamedItem(namespaceUri, localName));
 
         /// <inheritdoc/>
         public IAttr SetNamedItem(IAttr item)
-        {
-            var result = GetOrWrap(HashCode.Combine(nameof(SetNamedItem), item), () => WrappedObject.SetNamedItem(item));
-            MarkAsStale();
-            return result;
-        }
+            => GetOrWrap(() => WrappedObject.SetNamedItem(item));
 
         /// <inheritdoc/>
         public IAttr SetNamedItemWithNamespaceUri(IAttr item)
-        {
-            var result = GetOrWrap(HashCode.Combine(nameof(SetNamedItemWithNamespaceUri), item), () => WrappedObject.SetNamedItemWithNamespaceUri(item));
-            MarkAsStale();
-            return result;
-        }
+            => GetOrWrap(() => WrappedObject.SetNamedItemWithNamespaceUri(item));
 
         /// <inheritdoc/>
         public IEnumerator<IAttr> GetEnumerator()

@@ -16,8 +16,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="AudioTrackListWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public AudioTrackListWrapper(IAudioTrackList initialObject, Func<IAudioTrackList> getObject) : base(initialObject, getObject) { }
+        internal AudioTrackListWrapper(WrapperFactory factory, IAudioTrackList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public event DomEventHandler Changed { add => WrappedObject.Changed += value; remove => WrappedObject.Changed -= value; }

@@ -17,12 +17,15 @@ namespace AngleSharpWrappers
     {
         public static IEnumerable<object[]> GetInterfaceMethods(Type type) => type.GetInterfaceMethods().Select(x => new[] { x });
 
+        public WrapperFactory Factory { get; } = new WrapperFactory();
+
+
         [Theory(DisplayName = "Forwards all method and property calls to wrapped node")]
         [MemberData(nameof(GetInterfaceMethods), typeof(IElement))]
         public void Test001(MethodInfo method)
         {
             var elmMock = new Mock<IElement>();
-            var sut = new ElementWrapper(elmMock.Object, () => elmMock.Object);
+            var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
             var args = method.CreateMethodArguments();
 
             method.Invoke(sut, args);
@@ -37,7 +40,7 @@ namespace AngleSharpWrappers
         {
             var elmMock = Mock.Of<IElement>();
 
-            var sut = new ElementWrapper(elmMock, () => elmMock);
+            var sut = (ElementWrapper)Factory.Wrap(() => elmMock);
 
             sut.WrappedObject.ShouldBe(elmMock);
         }
@@ -45,22 +48,24 @@ namespace AngleSharpWrappers
         [Fact(DisplayName = "Wrapper refreshes wrapped node after MarkAsStale is called")]
         public void Test003()
         {
-            var callCount = 0;
-            var sut = new ElementWrapper(Mock.Of<IElement>(), () => { callCount++; return Mock.Of<IElement>(); });
+            IElement elm = Mock.Of<IElement>();
+            var sut = (ElementWrapper)Factory.Wrap(() => elm);
             var firstWrapped = sut.WrappedObject;
 
             sut.MarkAsStale();
+            elm = Mock.Of<IElement>();
 
             sut.WrappedObject.ShouldNotBe(firstWrapped);
-            callCount.ShouldBe(1);
         }
 
         [Fact(DisplayName = "When a wrapped node is no longer available, accessing methods or properties throws ElementNoLongerAvailableException")]
         public void Test004()
         {
-            var sut = new ElementWrapper(Mock.Of<IElement>(), () => null);
+            IElement? elm = Mock.Of<IElement>();
+            var sut = (ElementWrapper)Factory.Wrap(() => elm);
 
             sut.MarkAsStale();
+            elm = null;
 
             Should.Throw<NodeNoLongerAvailableException>(() => sut.WrappedObject);
         }
@@ -71,7 +76,7 @@ namespace AngleSharpWrappers
             var elmMock = new Mock<IElement>();
             var elmParent = Mock.Of<IElement>();
             elmMock.SetupGet(x => x.ParentElement).Returns(elmParent);
-            var sut = new ElementWrapper(elmMock.Object, () => elmMock.Object);
+            var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
 
             var parent = sut.ParentElement;
 
@@ -82,8 +87,9 @@ namespace AngleSharpWrappers
         public void Test006()
         {
             var elmMock = new Mock<IElement>();
-            elmMock.SetupGet(x => x.ParentElement).Returns(() => Mock.Of<IElement>());
-            var sut = new ElementWrapper(elmMock.Object, () => elmMock.Object);
+            var parentElm = Mock.Of<IElement>();
+            elmMock.SetupGet(x => x.ParentElement).Returns(() => parentElm);
+            var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
 
             sut.ParentElement.ShouldBeSameAs(sut.ParentElement);
         }
@@ -93,11 +99,11 @@ namespace AngleSharpWrappers
         {
             var elmMock = new Mock<IElement>();
             elmMock.SetupGet(x => x.ParentElement).Returns(() => new Mock<IElement>().Object);
-            var sut = new ElementWrapper(elmMock.Object, () => elmMock.Object);
+            var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
             var parentElementWrapper = ((ElementWrapper)sut.ParentElement);
             var initialWrappedParentNode = parentElementWrapper.WrappedObject;
 
-            sut.MarkAsStale();
+            Factory.MarkAsStale();
 
             initialWrappedParentNode.ShouldNotBeSameAs(parentElementWrapper.WrappedObject);
         }

@@ -12,8 +12,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="AttrWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public AttrWrapper(IAttr initialObject, Func<IAttr> getObject) : base(initialObject, getObject) { }
+        internal AttrWrapper(WrapperFactory factory, IAttr initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public String LocalName { get => WrappedObject.LocalName; }

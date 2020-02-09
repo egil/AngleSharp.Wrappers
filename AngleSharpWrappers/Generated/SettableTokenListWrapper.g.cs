@@ -14,8 +14,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="SettableTokenListWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public SettableTokenListWrapper(ISettableTokenList initialObject, Func<ISettableTokenList> getObject) : base(initialObject, getObject) { }
+        internal SettableTokenListWrapper(WrapperFactory factory, ISettableTokenList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public String this[Int32 index] { get => WrappedObject[index]; }

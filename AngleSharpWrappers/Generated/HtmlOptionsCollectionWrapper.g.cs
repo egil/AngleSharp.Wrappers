@@ -14,14 +14,13 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="HtmlOptionsCollectionWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public HtmlOptionsCollectionWrapper(IHtmlOptionsCollection initialObject, Func<IHtmlOptionsCollection> getObject) : base(initialObject, getObject) { }
+        internal HtmlOptionsCollectionWrapper(WrapperFactory factory, IHtmlOptionsCollection initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
-        public IHtmlOptionElement this[Int32 index] { get => GetOrWrap(HashCode.Combine("this+System.Int32", index), () => WrappedObject[index]); }
+        public IHtmlOptionElement this[Int32 index] { get => GetOrWrap(() => WrappedObject[index]); }
 
         /// <inheritdoc/>
-        public IHtmlOptionElement this[String id] { get => GetOrWrap(HashCode.Combine("this+System.String", id), () => WrappedObject[id]); }
+        public IHtmlOptionElement this[String id] { get => GetOrWrap(() => WrappedObject[id]); }
 
         /// <inheritdoc/>
         public Int32 Length { get => WrappedObject.Length; }
@@ -31,21 +30,15 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public void Add(IHtmlOptionElement element, IHtmlElement before)
-        {
-            WrappedObject.Add(element, before);
-            MarkAsStale();
-        }
+            => WrappedObject.Add(element, before);
 
         /// <inheritdoc/>
         public void Add(IHtmlOptionsGroupElement element, IHtmlElement before)
-        {
-            WrappedObject.Add(element, before);
-            MarkAsStale();
-        }
+            => WrappedObject.Add(element, before);
 
         /// <inheritdoc/>
         public IHtmlOptionElement GetOptionAt(Int32 index)
-            => GetOrWrap(HashCode.Combine(nameof(GetOptionAt), index), () => WrappedObject.GetOptionAt(index));
+            => GetOrWrap(() => WrappedObject.GetOptionAt(index));
 
         /// <inheritdoc/>
         public void Remove(Int32 index)
@@ -53,10 +46,7 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public void SetOptionAt(Int32 index, IHtmlOptionElement option)
-        {
-            WrappedObject.SetOptionAt(index, option);
-            MarkAsStale();
-        }
+            => WrappedObject.SetOptionAt(index, option);
 
         /// <inheritdoc/>
         public IEnumerator<IHtmlOptionElement> GetEnumerator()

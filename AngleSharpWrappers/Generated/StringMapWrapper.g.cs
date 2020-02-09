@@ -14,8 +14,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="StringMapWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public StringMapWrapper(IStringMap initialObject, Func<IStringMap> getObject) : base(initialObject, getObject) { }
+        internal StringMapWrapper(WrapperFactory factory, IStringMap initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public String this[String name] { get => WrappedObject[name]; set => WrappedObject[name] = value;}

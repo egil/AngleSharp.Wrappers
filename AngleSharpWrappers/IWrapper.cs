@@ -1,4 +1,6 @@
-﻿namespace AngleSharpWrappers
+﻿using System;
+
+namespace AngleSharpWrappers
 {
     /// <summary>
     /// Represents a type that can wrap another type.
@@ -9,5 +11,10 @@
         /// Marks the wrapped object as stale, and forces the wrapper to retrieve it again.
         /// </summary>
         void MarkAsStale();
+    }
+
+    public interface IWrapper<T> : IWrapper
+    {
+        T WrappedObject { get; }
     }
 }

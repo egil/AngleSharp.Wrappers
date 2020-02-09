@@ -18,12 +18,14 @@ namespace AngleSharpWrappers
         public static IEnumerable<object[]> GetInterfaceMethods(Type type) =>
             type.GetInterfaceMethods().Where(x => x.Name != "GetEnumerator").Select(x => new[] { x });
 
+        public WrapperFactory Factory { get; } = new WrapperFactory();
+
         [Theory(DisplayName = "Forwards all method and property calls to wrapped collection")]
         [MemberData(nameof(GetInterfaceMethods), typeof(IHtmlCollection<IElement>))]
         public void Test001(MethodInfo method)
         {
             var elmMock = new Mock<IHtmlCollection<IElement>>();
-            var sut = new HtmlCollectionWrapper<IElement>(elmMock.Object, () => elmMock.Object);
+            var sut = Factory.Wrap(() => elmMock.Object);
             var args = method.CreateMethodArguments();
 
             method.Invoke(sut, args);
@@ -38,7 +40,7 @@ namespace AngleSharpWrappers
         {
             var elmMock = new Mock<IHtmlCollection<IElement>>();
 
-            var sut = new HtmlCollectionWrapper<IElement>(elmMock.Object, () => elmMock.Object);
+            var sut = (HtmlCollectionWrapper<IElement>)Factory.Wrap(() => elmMock.Object);
 
             sut.WrappedObject.ShouldBe(elmMock.Object);
         }
@@ -46,24 +48,26 @@ namespace AngleSharpWrappers
         [Fact(DisplayName = "Wrapper refreshes wrapped node after MarkAsStale is called")]
         public void Test004()
         {
-            var callCount = 0;
-            var elmMock1 = Mock.Of<IHtmlCollection<IElement>>();
-            var elmMock2 = Mock.Of<IHtmlCollection<IElement>>();
-            var sut = new HtmlCollectionWrapper<IElement>(elmMock1, () => { callCount++; return elmMock2; });
+            IHtmlCollection<IElement> elmMock = Mock.Of<IHtmlCollection<IElement>>();
+            var sut = (HtmlCollectionWrapper<IElement>)Factory.Wrap(() => elmMock);
             var firstWrapped = sut.WrappedObject;
 
             sut.MarkAsStale();
+            elmMock = Mock.Of<IHtmlCollection<IElement>>();
 
             firstWrapped.ShouldNotBeSameAs(sut.WrappedObject);
-            sut.WrappedObject.ShouldBeSameAs(elmMock2);
-            callCount.ShouldBe(1);
+            sut.WrappedObject.ShouldBeSameAs(elmMock);
         }
 
         [Fact(DisplayName = "When a wrapped node is no longer available, accessing methods or properties throws ElementNoLongerAvailableException")]
         public void Test005()
         {
-            var sut = new HtmlCollectionWrapper<IElement>(Mock.Of<IHtmlCollection<IElement>>(), () => default(IHtmlCollection<IElement>));
+            IHtmlCollection<IElement>? elmMock = Mock.Of<IHtmlCollection<IElement>>();
+            var sut = (HtmlCollectionWrapper<IElement>)Factory.Wrap(() => elmMock);
+
             sut.MarkAsStale();
+            elmMock = null;
+
             Should.Throw<NodeNoLongerAvailableException>(() => sut.WrappedObject);
         }
 
@@ -76,7 +80,7 @@ namespace AngleSharpWrappers
             colMock.SetupGet(x => x[0]).Returns(elm1);
             colMock.SetupGet(x => x["id"]).Returns(elm2);
 
-            var sut = new HtmlCollectionWrapper<IElement>(colMock.Object, () => colMock.Object);
+            var sut = (HtmlCollectionWrapper<IElement>)Factory.Wrap(() => colMock.Object);
 
             sut[0].ShouldBeOfType<ElementWrapper>().WrappedObject.ShouldBe(elm1);
             sut["id"].ShouldBeOfType<ElementWrapper>().WrappedObject.ShouldBe(elm2);
@@ -92,7 +96,7 @@ namespace AngleSharpWrappers
             colMock.SetupGet(x => x[1]).Returns(elm2);
             colMock.SetupGet(x => x.Length).Returns(2);
 
-            var sut = new HtmlCollectionWrapper<IElement>(colMock.Object, () => colMock.Object);
+            var sut = (HtmlCollectionWrapper<IElement>)Factory.Wrap(() => colMock.Object);
 
             sut.ShouldAllBe(
                 x => x.ShouldBeOfType<ElementWrapper>().WrappedObject.ShouldBe(elm1),
@@ -106,11 +110,11 @@ namespace AngleSharpWrappers
             var colMock = new Mock<IHtmlCollection<IElement>>();
             var elm1 = new Mock<IElement>().Object;
             colMock.SetupGet(x => x[0]).Returns(() => new Mock<IElement>().Object);
-            var sut = new HtmlCollectionWrapper<IElement>(colMock.Object, () => colMock.Object);
+            var sut = (HtmlCollectionWrapper<IElement>)Factory.Wrap(() => colMock.Object);
             var colElmWrapper = (ElementWrapper)sut[0];
             var initialWrappedColElm = colElmWrapper.WrappedObject;
 
-            sut.MarkAsStale();
+            Factory.MarkAsStale();
 
             initialWrappedColElm.ShouldNotBeSameAs(colElmWrapper.WrappedObject);
         }

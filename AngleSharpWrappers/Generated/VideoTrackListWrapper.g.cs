@@ -16,8 +16,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="VideoTrackListWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public VideoTrackListWrapper(IVideoTrackList initialObject, Func<IVideoTrackList> getObject) : base(initialObject, getObject) { }
+        internal VideoTrackListWrapper(WrapperFactory factory, IVideoTrackList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public event DomEventHandler Changed { add => WrappedObject.Changed += value; remove => WrappedObject.Changed -= value; }

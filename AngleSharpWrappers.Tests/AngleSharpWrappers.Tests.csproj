@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\repos\AngleSharp\src\AngleSharp\AngleSharp.Core.csproj" />
     <ProjectReference Include="..\AngleSharpWrappers\AngleSharpWrappers.csproj" />
   </ItemGroup>
 

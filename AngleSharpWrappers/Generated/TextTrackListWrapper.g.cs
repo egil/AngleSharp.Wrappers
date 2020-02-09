@@ -16,8 +16,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="TextTrackListWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public TextTrackListWrapper(ITextTrackList initialObject, Func<ITextTrackList> getObject) : base(initialObject, getObject) { }
+        internal TextTrackListWrapper(WrapperFactory factory, ITextTrackList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public event DomEventHandler TrackAdded { add => WrappedObject.TrackAdded += value; remove => WrappedObject.TrackAdded -= value; }

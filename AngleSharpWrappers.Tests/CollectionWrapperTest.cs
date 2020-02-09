@@ -12,6 +12,8 @@ namespace AngleSharpWrappers
 {
     public class CollectionWrapperTest
     {
+        public WrapperFactory Factory { get; } = new WrapperFactory();
+
         [Fact(DisplayName = "HtmlAllCollectionWrapper Items returned by Enumerators are wrapped")]
         public void Test001()
         {
@@ -22,7 +24,7 @@ namespace AngleSharpWrappers
             colMock.SetupGet(x => x[1]).Returns(elm2);
             colMock.SetupGet(x => x.Length).Returns(2);
 
-            var sut = new HtmlAllCollectionWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.ShouldAllBe(
                 x => x.ShouldBeOfType<ElementWrapper>().WrappedObject.ShouldBe(elm1),
@@ -44,7 +46,7 @@ namespace AngleSharpWrappers
             colMock.SetupGet(x => x[1]).Returns(elm2);
             colMock.SetupGet(x => x.Length).Returns(2);
 
-            var sut = new HtmlFormControlsCollectionWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.ShouldAllBe(
                 x => x.ShouldBeOfType<HtmlElementWrapper>().WrappedObject.ShouldBe(elm1),
@@ -66,7 +68,7 @@ namespace AngleSharpWrappers
             colMock.SetupGet(x => x[1]).Returns(elm2);
             colMock.SetupGet(x => x.Length).Returns(2);
 
-            var sut = new HtmlOptionsCollectionWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.ShouldAllBe(
                 x => x.ShouldBeOfType<HtmlOptionElementWrapper>().WrappedObject.ShouldBe(elm1),
@@ -88,7 +90,7 @@ namespace AngleSharpWrappers
             colMock.SetupGet(x => x[1]).Returns(elm2);
             colMock.SetupGet(x => x.Length).Returns(2);
 
-            var sut = new NamedNodeMapWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.ShouldAllBe(
                 x => x.ShouldBeOfType<AttrWrapper>().WrappedObject.ShouldBe(elm1),
@@ -111,7 +113,7 @@ namespace AngleSharpWrappers
             colMock.SetupGet(x => x[1]).Returns(elm2);
             colMock.SetupGet(x => x.Length).Returns(2);
 
-            var sut = new NodeListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.ShouldAllBe(
                 x => x.ShouldBeOfType<NodeWrapper>().WrappedObject.ShouldBe(elm1),
@@ -128,7 +130,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<IAudioTrackList>();
 
-            var sut = new AudioTrackListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -141,7 +143,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<IFileList>();
 
-            var sut = new FileListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -154,7 +156,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<IMediaList>();
 
-            var sut = new MediaListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -167,7 +169,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<ISettableTokenList>();
 
-            var sut = new SettableTokenListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -180,7 +182,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<IStringList>();
 
-            var sut = new StringListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -193,7 +195,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<IStringMap>();
 
-            var sut = new StringMapWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -206,7 +208,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<IStyleSheetList>();
 
-            var sut = new StyleSheetListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -220,7 +222,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<ITextTrackCueList>();
 
-            var sut = new TextTrackCueListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -233,7 +235,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<ITextTrackList>();
 
-            var sut = new TextTrackListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -246,7 +248,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<ITokenList>();
 
-            var sut = new TokenListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();
@@ -259,7 +261,7 @@ namespace AngleSharpWrappers
         {
             var colMock = new Mock<IVideoTrackList>();
 
-            var sut = new VideoTrackListWrapper(colMock.Object, () => colMock.Object);
+            var sut = Factory.Wrap(() => colMock.Object);
 
             sut.GetEnumerator();
             ((System.Collections.IEnumerable)sut).GetEnumerator();

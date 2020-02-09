@@ -16,11 +16,10 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="NodeListWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public NodeListWrapper(INodeList initialObject, Func<INodeList> getObject) : base(initialObject, getObject) { }
+        internal NodeListWrapper(WrapperFactory factory, INodeList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
-        public INode this[Int32 index] { get => GetOrWrap(HashCode.Combine("this+System.Int32", index), () => WrappedObject[index]); }
+        public INode this[Int32 index] { get => GetOrWrap(() => WrappedObject[index]); }
 
         /// <inheritdoc/>
         public Int32 Length { get => WrappedObject.Length; }

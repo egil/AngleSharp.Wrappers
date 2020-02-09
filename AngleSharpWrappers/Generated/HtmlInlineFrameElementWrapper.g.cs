@@ -17,8 +17,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="HtmlInlineFrameElementWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public HtmlInlineFrameElementWrapper(IHtmlInlineFrameElement initialObject, Func<INode> getObject) : base(initialObject, getObject) { }
+        internal HtmlInlineFrameElementWrapper(WrapperFactory factory, IHtmlInlineFrameElement initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public event DomEventHandler Aborted { add => ((IGlobalEventHandlers)WrappedObject).Aborted += value; remove => ((IGlobalEventHandlers)WrappedObject).Aborted -= value; }
@@ -200,13 +199,11 @@ namespace AngleSharpWrappers
         /// <inheritdoc/>
         public String AccessKeyLabel { get => WrappedObject.AccessKeyLabel; }
 
-        private static readonly int AssignedSlotKey = HashCode.Combine(nameof(AssignedSlot));
         /// <inheritdoc/>
-        public IElement AssignedSlot { get => GetOrWrap(AssignedSlotKey, () => WrappedObject.AssignedSlot); }
+        public IElement AssignedSlot { get => GetOrWrap(() => WrappedObject.AssignedSlot); }
 
-        private static readonly int AttributesKey = HashCode.Combine(nameof(Attributes));
         /// <inheritdoc/>
-        public INamedNodeMap Attributes { get => GetOrWrap(AttributesKey, () => WrappedObject.Attributes); }
+        public INamedNodeMap Attributes { get => GetOrWrap(() => WrappedObject.Attributes); }
 
         /// <inheritdoc/>
         public String BaseUri { get => WrappedObject.BaseUri; }
@@ -217,24 +214,20 @@ namespace AngleSharpWrappers
         /// <inheritdoc/>
         public Int32 ChildElementCount { get => WrappedObject.ChildElementCount; }
 
-        private static readonly int ChildNodesKey = HashCode.Combine(nameof(ChildNodes));
         /// <inheritdoc/>
-        public INodeList ChildNodes { get => GetOrWrap(ChildNodesKey, () => WrappedObject.ChildNodes); }
+        public INodeList ChildNodes { get => GetOrWrap(() => WrappedObject.ChildNodes); }
 
-        private static readonly int ChildrenKey = HashCode.Combine(nameof(Children));
         /// <inheritdoc/>
-        public IHtmlCollection<IElement> Children { get => GetOrWrap(ChildrenKey, () => WrappedObject.Children); }
+        public IHtmlCollection<IElement> Children { get => GetOrWrap(() => WrappedObject.Children); }
 
-        private static readonly int ClassListKey = HashCode.Combine(nameof(ClassList));
         /// <inheritdoc/>
-        public ITokenList ClassList { get => GetOrWrap(ClassListKey, () => WrappedObject.ClassList); }
+        public ITokenList ClassList { get => GetOrWrap(() => WrappedObject.ClassList); }
 
         /// <inheritdoc/>
         public String ClassName { get => WrappedObject.ClassName; set => WrappedObject.ClassName = value;}
 
-        private static readonly int ContentDocumentKey = HashCode.Combine(nameof(ContentDocument));
         /// <inheritdoc/>
-        public IDocument ContentDocument { get => GetOrWrap(ContentDocumentKey, () => WrappedObject.ContentDocument); }
+        public IDocument ContentDocument { get => GetOrWrap(() => WrappedObject.ContentDocument); }
 
         /// <inheritdoc/>
         public String ContentEditable { get => WrappedObject.ContentEditable; set => WrappedObject.ContentEditable = value;}
@@ -245,16 +238,14 @@ namespace AngleSharpWrappers
         /// <inheritdoc/>
         public IWindow ContentWindow { get => WrappedObject.ContentWindow; }
 
-        private static readonly int ContextMenuKey = HashCode.Combine(nameof(ContextMenu));
         /// <inheritdoc/>
-        public IHtmlMenuElement ContextMenu { get => GetOrWrap(ContextMenuKey, () => WrappedObject.ContextMenu); set { WrappedObject.ContextMenu = value; MarkAsStale(); }}
+        public IHtmlMenuElement ContextMenu { get => GetOrWrap(() => WrappedObject.ContextMenu); set => WrappedObject.ContextMenu = value;}
 
         /// <inheritdoc/>
         public IDownload CurrentDownload { get => WrappedObject.CurrentDownload; }
 
-        private static readonly int DatasetKey = HashCode.Combine(nameof(Dataset));
         /// <inheritdoc/>
-        public IStringMap Dataset { get => GetOrWrap(DatasetKey, () => WrappedObject.Dataset); }
+        public IStringMap Dataset { get => GetOrWrap(() => WrappedObject.Dataset); }
 
         /// <inheritdoc/>
         public String Direction { get => WrappedObject.Direction; set => WrappedObject.Direction = value;}
@@ -265,17 +256,14 @@ namespace AngleSharpWrappers
         /// <inheritdoc/>
         public Int32 DisplayWidth { get => WrappedObject.DisplayWidth; set => WrappedObject.DisplayWidth = value;}
 
-        private static readonly int DropZoneKey = HashCode.Combine(nameof(DropZone));
         /// <inheritdoc/>
-        public ISettableTokenList DropZone { get => GetOrWrap(DropZoneKey, () => WrappedObject.DropZone); }
+        public ISettableTokenList DropZone { get => GetOrWrap(() => WrappedObject.DropZone); }
 
-        private static readonly int FirstChildKey = HashCode.Combine(nameof(FirstChild));
         /// <inheritdoc/>
-        public INode FirstChild { get => GetOrWrap(FirstChildKey, () => WrappedObject.FirstChild); }
+        public INode FirstChild { get => GetOrWrap(() => WrappedObject.FirstChild); }
 
-        private static readonly int FirstElementChildKey = HashCode.Combine(nameof(FirstElementChild));
         /// <inheritdoc/>
-        public IElement FirstElementChild { get => GetOrWrap(FirstElementChildKey, () => WrappedObject.FirstElementChild); }
+        public IElement FirstElementChild { get => GetOrWrap(() => WrappedObject.FirstElementChild); }
 
         /// <inheritdoc/>
         public NodeFlags Flags { get => WrappedObject.Flags; }
@@ -319,13 +307,11 @@ namespace AngleSharpWrappers
         /// <inheritdoc/>
         public String Language { get => WrappedObject.Language; set => WrappedObject.Language = value;}
 
-        private static readonly int LastChildKey = HashCode.Combine(nameof(LastChild));
         /// <inheritdoc/>
-        public INode LastChild { get => GetOrWrap(LastChildKey, () => WrappedObject.LastChild); }
+        public INode LastChild { get => GetOrWrap(() => WrappedObject.LastChild); }
 
-        private static readonly int LastElementChildKey = HashCode.Combine(nameof(LastElementChild));
         /// <inheritdoc/>
-        public IElement LastElementChild { get => GetOrWrap(LastElementChildKey, () => WrappedObject.LastElementChild); }
+        public IElement LastElementChild { get => GetOrWrap(() => WrappedObject.LastElementChild); }
 
         /// <inheritdoc/>
         public String LocalName { get => WrappedObject.LocalName; }
@@ -336,13 +322,11 @@ namespace AngleSharpWrappers
         /// <inheritdoc/>
         public String NamespaceUri { get => WrappedObject.NamespaceUri; }
 
-        private static readonly int NextElementSiblingKey = HashCode.Combine(nameof(NextElementSibling));
         /// <inheritdoc/>
-        public IElement NextElementSibling { get => GetOrWrap(NextElementSiblingKey, () => WrappedObject.NextElementSibling); }
+        public IElement NextElementSibling { get => GetOrWrap(() => WrappedObject.NextElementSibling); }
 
-        private static readonly int NextSiblingKey = HashCode.Combine(nameof(NextSibling));
         /// <inheritdoc/>
-        public INode NextSibling { get => GetOrWrap(NextSiblingKey, () => WrappedObject.NextSibling); }
+        public INode NextSibling { get => GetOrWrap(() => WrappedObject.NextSibling); }
 
         /// <inheritdoc/>
         public String NodeName { get => WrappedObject.NodeName; }
@@ -356,39 +340,32 @@ namespace AngleSharpWrappers
         /// <inheritdoc/>
         public String OuterHtml { get => WrappedObject.OuterHtml; set => WrappedObject.OuterHtml = value;}
 
-        private static readonly int OwnerKey = HashCode.Combine(nameof(Owner));
         /// <inheritdoc/>
-        public IDocument Owner { get => GetOrWrap(OwnerKey, () => WrappedObject.Owner); }
+        public IDocument Owner { get => GetOrWrap(() => WrappedObject.Owner); }
 
-        private static readonly int ParentKey = HashCode.Combine(nameof(Parent));
         /// <inheritdoc/>
-        public INode Parent { get => GetOrWrap(ParentKey, () => WrappedObject.Parent); }
+        public INode Parent { get => GetOrWrap(() => WrappedObject.Parent); }
 
-        private static readonly int ParentElementKey = HashCode.Combine(nameof(ParentElement));
         /// <inheritdoc/>
-        public IElement ParentElement { get => GetOrWrap(ParentElementKey, () => WrappedObject.ParentElement); }
+        public IElement ParentElement { get => GetOrWrap(() => WrappedObject.ParentElement); }
 
         /// <inheritdoc/>
         public String Prefix { get => WrappedObject.Prefix; }
 
-        private static readonly int PreviousElementSiblingKey = HashCode.Combine(nameof(PreviousElementSibling));
         /// <inheritdoc/>
-        public IElement PreviousElementSibling { get => GetOrWrap(PreviousElementSiblingKey, () => WrappedObject.PreviousElementSibling); }
+        public IElement PreviousElementSibling { get => GetOrWrap(() => WrappedObject.PreviousElementSibling); }
 
-        private static readonly int PreviousSiblingKey = HashCode.Combine(nameof(PreviousSibling));
         /// <inheritdoc/>
-        public INode PreviousSibling { get => GetOrWrap(PreviousSiblingKey, () => WrappedObject.PreviousSibling); }
+        public INode PreviousSibling { get => GetOrWrap(() => WrappedObject.PreviousSibling); }
 
         /// <inheritdoc/>
         public String ReferrerPolicy { get => WrappedObject.ReferrerPolicy; set => WrappedObject.ReferrerPolicy = value;}
 
-        private static readonly int SandboxKey = HashCode.Combine(nameof(Sandbox));
         /// <inheritdoc/>
-        public ISettableTokenList Sandbox { get => GetOrWrap(SandboxKey, () => WrappedObject.Sandbox); }
+        public ISettableTokenList Sandbox { get => GetOrWrap(() => WrappedObject.Sandbox); }
 
-        private static readonly int ShadowRootKey = HashCode.Combine(nameof(ShadowRoot));
         /// <inheritdoc/>
-        public IShadowRoot ShadowRoot { get => GetOrWrap(ShadowRootKey, () => WrappedObject.ShadowRoot); }
+        public IShadowRoot ShadowRoot { get => GetOrWrap(() => WrappedObject.ShadowRoot); }
 
         /// <inheritdoc/>
         public String Slot { get => WrappedObject.Slot; set => WrappedObject.Slot = value;}
@@ -425,15 +402,11 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public INode AppendChild(INode child)
-        {
-            var result = GetOrWrap(HashCode.Combine(nameof(AppendChild), child), () => WrappedObject.AppendChild(child));
-            MarkAsStale();
-            return result;
-        }
+            => GetOrWrap(() => WrappedObject.AppendChild(child));
 
         /// <inheritdoc/>
         public IShadowRoot AttachShadow(ShadowRootMode mode)
-            => GetOrWrap(HashCode.Combine(nameof(AttachShadow), mode), () => WrappedObject.AttachShadow(mode));
+            => GetOrWrap(() => WrappedObject.AttachShadow(mode));
 
         /// <inheritdoc/>
         public void Before(INode[] nodes)
@@ -441,11 +414,11 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public INode Clone(Boolean deep)
-            => GetOrWrap(HashCode.Combine(nameof(Clone), deep), () => WrappedObject.Clone(deep));
+            => GetOrWrap(() => WrappedObject.Clone(deep));
 
         /// <inheritdoc/>
         public IElement Closest(String selectors)
-            => GetOrWrap(HashCode.Combine(nameof(Closest), selectors), () => WrappedObject.Closest(selectors));
+            => GetOrWrap(() => WrappedObject.Closest(selectors));
 
         /// <inheritdoc/>
         public DocumentPositions CompareDocumentPosition(INode otherNode)
@@ -489,15 +462,15 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public IHtmlCollection<IElement> GetElementsByClassName(String classNames)
-            => GetOrWrap<IElement>(HashCode.Combine(nameof(GetElementsByClassName), classNames), () => WrappedObject.GetElementsByClassName(classNames));
+            => GetOrWrap(() => WrappedObject.GetElementsByClassName(classNames));
 
         /// <inheritdoc/>
         public IHtmlCollection<IElement> GetElementsByTagName(String tagName)
-            => GetOrWrap<IElement>(HashCode.Combine(nameof(GetElementsByTagName), tagName), () => WrappedObject.GetElementsByTagName(tagName));
+            => GetOrWrap(() => WrappedObject.GetElementsByTagName(tagName));
 
         /// <inheritdoc/>
         public IHtmlCollection<IElement> GetElementsByTagNameNS(String namespaceUri, String tagName)
-            => GetOrWrap<IElement>(HashCode.Combine(nameof(GetElementsByTagNameNS), namespaceUri, tagName), () => WrappedObject.GetElementsByTagNameNS(namespaceUri, tagName));
+            => GetOrWrap(() => WrappedObject.GetElementsByTagNameNS(namespaceUri, tagName));
 
         /// <inheritdoc/>
         public Boolean HasAttribute(String name)
@@ -513,11 +486,7 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public INode InsertBefore(INode newElement, INode referenceElement)
-        {
-            var result = GetOrWrap(HashCode.Combine(nameof(InsertBefore), newElement, referenceElement), () => WrappedObject.InsertBefore(newElement, referenceElement));
-            MarkAsStale();
-            return result;
-        }
+            => GetOrWrap(() => WrappedObject.InsertBefore(newElement, referenceElement));
 
         /// <inheritdoc/>
         public void InvokeEventListener(Event ev)
@@ -549,11 +518,11 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public IElement QuerySelector(String selectors)
-            => GetOrWrap(HashCode.Combine(nameof(QuerySelector), selectors), () => WrappedObject.QuerySelector(selectors));
+            => GetOrWrap(() => WrappedObject.QuerySelector(selectors));
 
         /// <inheritdoc/>
         public IHtmlCollection<IElement> QuerySelectorAll(String selectors)
-            => GetOrWrap<IElement>(HashCode.Combine(nameof(QuerySelectorAll), selectors), () => WrappedObject.QuerySelectorAll(selectors));
+            => GetOrWrap(() => WrappedObject.QuerySelectorAll(selectors));
 
         /// <inheritdoc/>
         public void Remove()
@@ -569,11 +538,7 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public INode RemoveChild(INode child)
-        {
-            var result = GetOrWrap(HashCode.Combine(nameof(RemoveChild), child), () => WrappedObject.RemoveChild(child));
-            MarkAsStale();
-            return result;
-        }
+            => GetOrWrap(() => WrappedObject.RemoveChild(child));
 
         /// <inheritdoc/>
         public void RemoveEventListener(String type, DomEventHandler callback, Boolean capture)
@@ -585,11 +550,7 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public INode ReplaceChild(INode newChild, INode oldChild)
-        {
-            var result = GetOrWrap(HashCode.Combine(nameof(ReplaceChild), newChild, oldChild), () => WrappedObject.ReplaceChild(newChild, oldChild));
-            MarkAsStale();
-            return result;
-        }
+            => GetOrWrap(() => WrappedObject.ReplaceChild(newChild, oldChild));
 
         /// <inheritdoc/>
         public void SetAttribute(String name, String value)

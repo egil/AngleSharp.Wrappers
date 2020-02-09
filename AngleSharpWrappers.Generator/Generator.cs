@@ -16,7 +16,7 @@ namespace AngleSharpWrappers.Generator
 {
     internal class Generator
     {
-        private const char space = ' ';
+        private const char Space = ' ';
         private static readonly Type INodeType = typeof(INode);
 
         private Dictionary<string, Type> WrappedTypes { get; }
@@ -36,215 +36,7 @@ namespace AngleSharpWrappers.Generator
                 GenerateWrapper(item);
             }
 
-            GenerateGetOrWrapMethods(WrappedTypes.Values);
             GenerateFactoryMethods(WrappedTypes.Values);
-        }
-
-        private void GenerateGetOrWrapMethods(IEnumerable<Type> wrappedTypes)
-        {
-            var output = new StringBuilder();
-            var usings = new List<Type>() { typeof(Func<>) };
-
-            output.AppendLine();
-            output.AppendLine("namespace AngleSharpWrappers");
-            output.AppendLine("{");
-            output.AppendLine($"{space,4}#nullable disable");
-            output.AppendLine($"{space,4}public abstract partial class Wrapper<TWrapped> : IWrapper where TWrapped : class");
-            output.AppendLine($"{space,4}{{");
-
-            var getOrWrapTypes = wrappedTypes.Where(x => x.FullName is { }).OrderBy(x => x.Name).ToDictionary(x => x.FullName, x => x);
-
-            foreach (var type in getOrWrapTypes.Values.Where(x => !x.IsGenericType).Where(x => !INodeType.IsAssignableFrom(x)))
-            {
-                var wrapperName = $"{type.Name[1..]}Wrapper";
-                output.AppendLine($"{space,8}/// <summary>");
-                output.AppendLine($"{space,8}/// Gets (or wraps) the requested nested object.");
-                output.AppendLine($"{space,8}/// </summary>");
-                output.AppendLine($"{space,8}/// <param name=\"key\">Key to look up the requested wrapped object.</param>");
-                output.AppendLine($"{space,8}/// <param name=\"objectQuery\">A function that can be used to retrieve a new instance of the wrapped type.</param>");
-                output.AppendLine($"{space,8}/// <returns>The object wrapped in a wrapper.</returns>");
-                output.AppendLine($"{space,8}protected {type.Name} GetOrWrap(int key, Func<{type.Name}> objectQuery)");
-                output.AppendLine($"{space,8}{{");
-                output.AppendLine($"{space,12}if (!Wrappers.TryGetValue(key, out var result))");
-                output.AppendLine($"{space,12}{{");
-                output.AppendLine($"{space,16}var initialObject = objectQuery();");
-                output.AppendLine($"{space,16}if (initialObject is null) return default;");
-                output.AppendLine($"{space,16}if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))");
-                output.AppendLine($"{space,16}{{");
-                output.AppendLine($"{space,20}result = new {wrapperName}(initialObject, objectQuery);");
-                output.AppendLine($"{space,16}}}");
-                output.AppendLine($"{space,16}Wrappers.Add(key, result);");
-                output.AppendLine($"{space,12}}}");
-                output.AppendLine($"{space,12}return ({type.Name})result;");
-                output.AppendLine($"{space,8}}}");
-                usings.Add(type);
-                usings.AddRange(type.GetGenericArguments());
-            }
-
-            // /// <summary>
-            // /// Gets (or wraps) the requested nested object.
-            // /// </summary>
-            // /// <param name="key">Key to look up the requested wrapped object.</param>
-            // /// <param name="objectQuery">A function that can be used to retrieve a new instance of the wrapped type.</param>
-            // /// <returns>The object wrapped in a wrapper.</returns>
-            // protected IHtmlCollection<T> GetOrWrap<T>(int key, Func<IHtmlCollection<T>> objectQuery) where T : class, IElement
-            // {
-            //     if (!Wrappers.TryGetValue(key, out var result))
-            //     {
-            //         result = new HtmlCollectionWrapper<T>(objectQuery);
-            //         Wrappers.Add(key, result);
-            //     }
-            //     return (IHtmlCollection<T>)result;
-            // }
-            foreach (var type in getOrWrapTypes.Values.Where(x => x.IsGenericType && x.GetGenericArguments().Any(y => y.IsGenericParameter)))
-            {
-                var typeName = GetInterfaceTypeName(type);
-                var paramType = type.GetGenericArguments().Single().GetGenericParameterConstraints().Single();
-                var wrapperName = GetWrapperClassName(type);
-                output.AppendLine($"{space,8}/// <summary>");
-                output.AppendLine($"{space,8}/// Gets (or wraps) the requested nested object.");
-                output.AppendLine($"{space,8}/// </summary>");
-                output.AppendLine($"{space,8}/// <param name=\"key\">Key to look up the requested wrapped object.</param>");
-                output.AppendLine($"{space,8}/// <param name=\"objectQuery\">A function that can be used to retrieve a new instance of the wrapped type.</param>");
-                output.AppendLine($"{space,8}/// <returns>The object wrapped in a wrapper.</returns>");
-                output.AppendLine($"{space,8}protected {typeName}<T> GetOrWrap<T>(int key, Func<{typeName}<T>> objectQuery) where T : class, {paramType.Name}");
-                output.AppendLine($"{space,8}{{");
-                output.AppendLine($"{space,12}if (!Wrappers.TryGetValue(key, out var result))");
-                output.AppendLine($"{space,12}{{");
-                output.AppendLine($"{space,16}var initialObject = objectQuery();");
-                output.AppendLine($"{space,16}if (initialObject is null) return default;");
-                output.AppendLine($"{space,16}if (!Wrapper.WrapperCache.TryGetValue(initialObject, out result))");
-                output.AppendLine($"{space,16}{{");
-                output.AppendLine($"{space,20}result = new {wrapperName}<T>(initialObject, objectQuery);");
-                output.AppendLine($"{space,16}}}");
-                output.AppendLine($"{space,16}Wrappers.Add(key, result);");
-                output.AppendLine($"{space,12}}}");
-                output.AppendLine($"{space,12}return ({typeName}<T>)result;");
-                output.AppendLine($"{space,8}}}");
-                usings.Add(type);
-                usings.AddRange(type.GetGenericArguments());
-            }
-
-            output.AppendLine($"{space,4}}}");
-            output.AppendLine("}");
-
-            AddUsingStatements(usings, output);
-
-            Console.WriteLine($"Writing Wrapper.g.cs");
-
-            File.WriteAllText($"Wrapper.g.cs", output.ToString());
-        }
-
-        // public static partial class WrapperFactoryFactory
-        // {
-        //     static WrapperFactoryFactory()
-        //     {
-        //         Wrappers.Add(typeof(IElement), (WrapperFactory<IElement>)CreateElementWrapper);
-        //     }
-        //        
-        //     /// <summary>
-        //     /// Creates a wrapper for an <see cref="IElement"/>.
-        //     /// </summary>
-        //     /// <param name="objectQuery">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        //     /// <returns>The <see cref="ElementWrapper"/>.</returns>
-        //     public static ElementWrapper CreateElementWrapper(Func<IElement?> objectQuery) => new ElementWrapper(objectQuery);
-        // }
-        private void GenerateFactoryMethods(IEnumerable<Type> wrappedTypes)
-        {
-            var output = new StringBuilder();
-            var usings = new List<Type>(wrappedTypes) { typeof(Func<>), typeof(Dictionary<,>) };
-            var getOrWrapTypes = wrappedTypes.Where(x => x.FullName is { }).OrderBy(x => x.Name).ToDictionary(x => x.FullName, x => x);
-            var inodes = getOrWrapTypes.Values.Where(x => !x.IsGenericType).Where(x => INodeType.IsAssignableFrom(x)).ToDictionary(x => x.FullName!, x => x);
-
-            var orderedINodes = CreateOrderedNodes(wrappedTypes, inodes);
-
-            output.AppendLine();
-            output.AppendLine("namespace AngleSharpWrappers");
-            output.AppendLine("{");
-            output.AppendLine($"{space,4}#nullable enable");
-            output.AppendLine($"{space,4}public static partial class WrapperFactory");
-            output.AppendLine($"{space,4}{{");
-            output.AppendLine();
-
-
-            output.AppendLine($"{space,8}/// <summary>");
-            output.AppendLine($"{space,8}/// Wraps an <see cref=\"INode\"/> in the wrapper specific to it.");
-            output.AppendLine($"{space,8}/// </summary>");
-            output.AppendLine($"{space,8}/// <typeparam name=\"T\">The node type.</typeparam>");
-            output.AppendLine($"{space,8}/// <param name=\"initialObject\">The initial node object to wrap</param>");
-            output.AppendLine($"{space,8}/// <param name=\"objectQuery\">A query method for refreshing the wrapped node object.</param>");
-            output.AppendLine($"{space,8}/// <returns>The <see cref=\"IWrapper\"/> wrapped node.</returns>");
-            output.AppendLine($"{space,8}public static IWrapper NodeWrapperFactory<T>(T initialObject, Func<T?> objectQuery) where T : class, INode");
-            output.AppendLine($"{space,8}{{");
-            output.AppendLine($"{space,12}return initialObject switch");
-            output.AppendLine($"{space,12}{{");
-
-            while (orderedINodes.Count > 0)
-            {
-                var typeName = orderedINodes.OrderBy(x => x.Value.Count).First().Key;
-                var type = inodes[typeName];
-                orderedINodes.Remove(typeName);
-
-                var wrapperName = $"{type.Name[1..]}Wrapper";
-                var typeVarName = $"{char.ToLowerInvariant(type.Name[1])}{type.Name[2..]}";
-                output.AppendLine($"{space,16}{type.Name} {typeVarName} => new {wrapperName}({typeVarName}, objectQuery),");
-                usings.Add(type);
-            }
-            output.AppendLine($"{space,16}_ => new NodeWrapper(initialObject, objectQuery)");
-            output.AppendLine($"{space,12}}};");
-            output.AppendLine($"{space,8}}}");
-
-            orderedINodes = CreateOrderedNodes(wrappedTypes, inodes);
-
-            output.AppendLine($"{space,8}/// <summary>");
-            output.AppendLine($"{space,8}/// Unwraps a wrapped node.");
-            output.AppendLine($"{space,8}/// </summary>");
-            output.AppendLine($"{space,8}/// <param name=\"wrapperOrNode\">Node to unwrap.</param>");
-            output.AppendLine($"{space,8}/// <returns>The unwrapped <see cref=\"INode\"/>.</returns>");
-            output.AppendLine($"{space,8}public static INode Unwrap(this INode wrapperOrNode)");
-            output.AppendLine($"{space,8}{{");
-            output.AppendLine($"{space,12}return wrapperOrNode switch");
-            output.AppendLine($"{space,12}{{");
-
-            while (orderedINodes.Count > 0)
-            {
-                var typeName = orderedINodes.OrderBy(x => x.Value.Count).First().Key;
-                var type = inodes[typeName];
-                orderedINodes.Remove(typeName);
-
-                var wrapperName = $"{type.Name[1..]}Wrapper";
-                var typeVarName = $"{char.ToLowerInvariant(type.Name[1])}{type.Name[2..]}";
-                output.AppendLine($"{space,16}{wrapperName} {typeVarName} => {typeVarName}.WrappedObject,");
-                usings.Add(type);
-            }
-
-            output.AppendLine($"{space,16}_ => wrapperOrNode");
-            output.AppendLine($"{space,12}}};");
-            output.AppendLine($"{space,8}}}");
-
-            output.AppendLine($"{space,4}}}");
-            output.AppendLine("}");
-
-            AddUsingStatements(usings, output);
-
-            Console.WriteLine($"Writing WrapperFactory.g.cs");
-
-            File.WriteAllText($"WrapperFactory.g.cs", output.ToString());
-        }
-
-        private static Dictionary<string, List<Type>> CreateOrderedNodes(IEnumerable<Type> wrappedTypes, Dictionary<string, Type> inodes)
-        {
-            var orderedINodes = inodes.ToDictionary(x => x.Key, x => new List<Type>());
-            foreach (var typeName in orderedINodes.Keys)
-            {
-                var type = inodes[typeName];
-                foreach (var parentType in type.GetInterfaces())
-                {
-                    if (orderedINodes.ContainsKey(parentType.FullName!) && typeName != parentType.FullName)
-                        orderedINodes[parentType.FullName!].Add(parentType);
-                }
-            }
-            return orderedINodes;
         }
 
         private void GenerateWrapper(Type type)
@@ -274,31 +66,23 @@ namespace AngleSharpWrappers.Generator
             output.AppendLine();
             output.AppendLine("namespace AngleSharpWrappers");
             output.AppendLine("{");
-            output.AppendLine($"{space,4}#nullable disable");
+            output.AppendLine($"{Space,4}#nullable disable");
 
-            output.AppendLine($"{space,4}/// <summary>");
-            output.AppendLine($"{space,4}/// Represents a wrapper class around <see cref=\"{name}{genericArgs.Replace('<', '{').Replace('>', '}')}\"/> type.");
-            output.AppendLine($"{space,4}/// </summary>");
-            output.AppendLine($"{space,4}public partial class {wrapperName}{genericArgs} : Wrapper<{name}{genericArgs}>, {name}{genericArgs}, IWrapper");
+            output.AppendLine($"{Space,4}/// <summary>");
+            output.AppendLine($"{Space,4}/// Represents a wrapper class around <see cref=\"{name}{genericArgs.Replace('<', '{').Replace('>', '}')}\"/> type.");
+            output.AppendLine($"{Space,4}/// </summary>");
+            output.AppendLine($"{Space,4}public partial class {wrapperName}{genericArgs} : Wrapper<{name}{genericArgs}>, {name}{genericArgs}, IWrapper");
             if (!string.IsNullOrEmpty(genericConstraints))
-                output.AppendLine($"{space,8}{genericConstraints}");
-            output.AppendLine($"{space,4}{{");
+                output.AppendLine($"{Space,8}{genericConstraints}");
+            output.AppendLine($"{Space,4}{{");
 
-            //if (type.IsGenericType && type.GetGenericArguments().Any(x => x.IsGenericParameter))
-            //{
-            //    var genericParam = type.GetGenericArguments().Single(x => x.IsGenericParameter);
-            //    output.AppendLine($"{space,8}private static readonly WrapperFactory<{genericParam.Name}> ItemWrapper = WrapperFactoryFactory.Create<{genericParam.Name}>();");
-            //    output.AppendLine();
-            //}
-
-            output.AppendLine($"{space,8}/// <summary>");
-            output.AppendLine($"{space,8}/// Creates an instance of the <see cref=\"{wrapperName}{genericArgs.Replace('<', '{').Replace('>', '}')}\"/> type;");
-            output.AppendLine($"{space,8}/// </summary>");
-            output.AppendLine($"{space,8}/// <param name=\"getObject\">A function that can be used to retrieve a new instance of the wrapped type.</param>");
+            output.AppendLine($"{Space,8}/// <summary>");
+            output.AppendLine($"{Space,8}/// Creates an instance of the <see cref=\"{wrapperName}{genericArgs.Replace('<', '{').Replace('>', '}')}\"/> type;");
+            output.AppendLine($"{Space,8}/// </summary>");
             if (INodeType.IsAssignableFrom(type))
-                output.AppendLine($"{space,8}public {wrapperName}({name}{genericArgs} initialObject, Func<INode> getObject) : base(initialObject, getObject) {{ }}");
+                output.AppendLine($"{Space,8}internal {wrapperName}(WrapperFactory factory, {name}{genericArgs} initialObject, Func<object> getObject) : base(factory, initialObject, getObject) {{ }}");
             else
-                output.AppendLine($"{space,8}public {wrapperName}({name}{genericArgs} initialObject, Func<{name}{genericArgs}> getObject) : base(initialObject, getObject) {{ }}");
+                output.AppendLine($"{Space,8}internal {wrapperName}(WrapperFactory factory, {name}{genericArgs} initialObject, Func<object> getObject) : base(factory, initialObject, getObject) {{ }}");
 
             yield return type;
             foreach (var t in type.GetGenericArguments()) yield return t;
@@ -307,7 +91,7 @@ namespace AngleSharpWrappers.Generator
 
         private static void CreateClassEnd(StringBuilder output)
         {
-            output.AppendLine($"{space,4}}}");
+            output.AppendLine($"{Space,4}}}");
             output.AppendLine("}");
         }
 
@@ -324,8 +108,8 @@ namespace AngleSharpWrappers.Generator
                     ? $"(({evt.DeclaringType!.Name})WrappedObject)"
                     : "WrappedObject";
 
-                output.AppendLine($"{space,8}/// <inheritdoc/>");
-                output.AppendLine($"{space,8}public event {evtType} {evt.Name} {{ add => {castType}.{evt.Name} += value; remove => {castType}.{evt.Name} -= value; }}");
+                output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                output.AppendLine($"{Space,8}public event {evtType} {evt.Name} {{ add => {castType}.{evt.Name} += value; remove => {castType}.{evt.Name} -= value; }}");
 
                 if (evt.DeclaringType is { })
                     yield return evt.DeclaringType;
@@ -354,25 +138,19 @@ namespace AngleSharpWrappers.Generator
 
                     var getter = " ";
                     var setter = prop.CanWrite
-                        ? IsWrappedType(paramType)
-                            ? $" set {{ WrappedObject[{indexParam.Name}] = value; MarkAsStale(); }}"
-                            : $" set => WrappedObject[{indexParam.Name}] = value;"
+                        ? $" set => WrappedObject[{indexParam.Name}] = value;"
                         : " ";
 
                     if (IsNonWrappedType(paramType) && prop.CanRead)
                     {
                         getter = $" get => WrappedObject[{indexParam.Name}];";
                     }
-                    else if (prop.CanRead && prop.PropertyType.IsGenericParameter)
-                    {
-                        getter = $" get => GetOrWrap<{GetReturnType(prop.PropertyType)}>(HashCode.Combine(\"this+{indexParam.ParameterType}\", {indexParam.Name}), () => WrappedObject[{indexParam.Name}]);";
-                    }
                     else if (prop.CanRead)
                     {
-                        getter = $" get => GetOrWrap(HashCode.Combine(\"this+{indexParam.ParameterType}\", {indexParam.Name}), () => WrappedObject[{indexParam.Name}]);";
+                        getter = $" get => GetOrWrap(() => WrappedObject[{indexParam.Name}]);";
                     }
-                    output.AppendLine($"{space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{space,8}public {GetReturnType(prop.PropertyType)} this[{GetReturnType(indexParam.ParameterType)} {indexParam.Name}] {{{getter}{setter}}}");
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                    output.AppendLine($"{Space,8}public {GetReturnType(prop.PropertyType)} this[{GetReturnType(indexParam.ParameterType)} {indexParam.Name}] {{{getter}{setter}}}");
 
                     yield return indexParam.ParameterType;
                 }
@@ -394,9 +172,7 @@ namespace AngleSharpWrappers.Generator
 
                     var getter = " ";
                     var setter = prop.CanWrite
-                        ? IsWrappedType(paramType)
-                            ? $" set {{ WrappedObject.{prop.Name} = value; MarkAsStale(); }}"
-                            : $" set => WrappedObject.{prop.Name} = value;"
+                        ? $" set => WrappedObject.{prop.Name} = value;"
                         : " ";
 
                     if (IsNonWrappedType(paramType) && prop.CanRead)
@@ -405,13 +181,11 @@ namespace AngleSharpWrappers.Generator
                     }
                     else if (prop.CanRead)
                     {
-                        var wrapKey = $"{prop.Name}Key";
-                        output.AppendLine($"{space,8}private static readonly int {wrapKey} = HashCode.Combine(nameof({prop.Name}));");
-                        getter = $" get => GetOrWrap({wrapKey}, () => WrappedObject.{prop.Name});";
+                        getter = $" get => GetOrWrap(() => WrappedObject.{prop.Name});";
                     }
 
-                    output.AppendLine($"{space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{space,8}public {propType} {prop.Name} {{{getter}{setter}}}");
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                    output.AppendLine($"{Space,8}public {propType} {prop.Name} {{{getter}{setter}}}");
 
                     yield return prop.PropertyType;
                     foreach (var t in prop.PropertyType.GetGenericArguments()) yield return t;
@@ -422,7 +196,6 @@ namespace AngleSharpWrappers.Generator
         private IEnumerable<Type> CreateMethods(Type type, StringBuilder output)
         {
             var methods = GetMethods(type);
-            var markAsStaleMethods = new string[] { "Add", "SetOptionAt", "AddOption" };
 
             foreach (var method in methods.Where(x => !x.IsSpecialName && x.Name != "GetEnumerator").OrderBy(x => x.Name))
             {
@@ -430,75 +203,20 @@ namespace AngleSharpWrappers.Generator
                 var paramStr = string.Join(", ", parameters.Select(x => $"{GetParamterType(x.ParameterType)} {x.Name}"));
                 var argsStr = string.Join(", ", parameters.Select(x => x.Name));
                 var returnType = GetReturnType(method.ReturnType);
-                var genericReturnType = method.ReturnType.IsGenericType
-                    ? $"<{string.Join(",", method.ReturnType.GetGenericArguments().Select(x => x.Name))}>"
-                    : string.Empty;
-
-                var shouldMarkAsStale = parameters.Any(x => IsWrappedType(x.ParameterType));
 
                 output.AppendLine();
 
                 if (IsNonWrappedType(method.ReturnType))
                 {
-                    output.AppendLine($"{space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{space,8}public {returnType} {method.Name}({paramStr})");
-
-                    if (shouldMarkAsStale && markAsStaleMethods.Contains(method.Name, StringComparison.Ordinal))
-                    {
-                        if (method.ReturnType == VoidType)
-                        {
-                            output.AppendLine($"{space,8}{{");
-                            output.AppendLine($"{space,12}WrappedObject.{method.Name}({argsStr});");
-                            output.AppendLine($"{space,12}MarkAsStale();");
-                            output.AppendLine($"{space,8}}}");
-                        }
-                        else
-                        {
-                            output.AppendLine($"{space,8}{{");
-                            output.AppendLine($"{space,12}var result = WrappedObject.{method.Name}({argsStr});");
-                            output.AppendLine($"{space,12}MarkAsStale();");
-                            output.AppendLine($"{space,12}return result;");
-                            output.AppendLine($"{space,8}}}");
-                        }
-                    }
-                    else
-                    {
-                        output.AppendLine($"{space,12}=> WrappedObject.{method.Name}({argsStr});");
-                    }
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                    output.AppendLine($"{Space,8}public {returnType} {method.Name}({paramStr})");
+                    output.AppendLine($"{Space,12}=> WrappedObject.{method.Name}({argsStr});");
                 }
                 else
                 {
-                    var wrapKey = string.Empty;
-                    if (parameters.Length == 0)
-                    {
-                        output.AppendLine($"{space,8}private static readonly int {method.Name}Key = HashCode.Combine(nameof({method.Name}));");
-                        wrapKey = $"{method.Name}Key";
-                    }
-                    else
-                    {
-                        wrapKey = $"HashCode.Combine(nameof({method.Name}), {argsStr})";
-                    }
-                    output.AppendLine($"{space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{space,8}public {returnType} {method.Name}({paramStr})");
-                    if (!shouldMarkAsStale)
-                    {
-                        output.AppendLine($"{space,12}=> GetOrWrap{genericReturnType}({wrapKey}, () => WrappedObject.{method.Name}({argsStr}));");
-                    }
-                    else if (shouldMarkAsStale && method.ReturnType == VoidType)
-                    {
-                        output.AppendLine($"{space,8}{{");
-                        output.AppendLine($"{space,12}WrappedObject.{method.Name}({argsStr});");
-                        output.AppendLine($"{space,12}MarkAsStale();");
-                        output.AppendLine($"{space,8}}}");
-                    }
-                    else
-                    {
-                        output.AppendLine($"{space,8}{{");
-                        output.AppendLine($"{space,12}var result = GetOrWrap{genericReturnType}({wrapKey}, () => WrappedObject.{method.Name}({argsStr}));");
-                        output.AppendLine($"{space,12}MarkAsStale();");
-                        output.AppendLine($"{space,12}return result;");
-                        output.AppendLine($"{space,8}}}");
-                    }
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                    output.AppendLine($"{Space,8}public {returnType} {method.Name}({paramStr})");
+                    output.AppendLine($"{Space,12}=> GetOrWrap(() => WrappedObject.{method.Name}({argsStr}));");
                 }
 
                 yield return method.ReturnType;
@@ -524,30 +242,126 @@ namespace AngleSharpWrappers.Generator
 
                 if (IsNonWrappedType(enumerableTargetType))
                 {
-                    output.AppendLine($"{space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{space,8}public IEnumerator<{GetParamterType(enumerableGeneric)}> GetEnumerator() => WrappedObject.GetEnumerator();");
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                    output.AppendLine($"{Space,8}public IEnumerator<{GetParamterType(enumerableGeneric)}> GetEnumerator() => WrappedObject.GetEnumerator();");
                     output.AppendLine();
-                    output.AppendLine($"{space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{space,8}IEnumerator IEnumerable.GetEnumerator() => WrappedObject.GetEnumerator();");
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                    output.AppendLine($"{Space,8}IEnumerator IEnumerable.GetEnumerator() => WrappedObject.GetEnumerator();");
                 }
                 else
                 {
-                    output.AppendLine($"{space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{space,8}public IEnumerator<{GetParamterType(enumerableGeneric)}> GetEnumerator()");
-                    output.AppendLine($"{space,8}{{");
-                    output.AppendLine($"{space,12}for (int i = 0; i < Length; i++)");
-                    output.AppendLine($"{space,12}{{");
-                    output.AppendLine($"{space,16}yield return this[i];");
-                    output.AppendLine($"{space,12}}}");
-                    output.AppendLine($"{space,8}}}");
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                    output.AppendLine($"{Space,8}public IEnumerator<{GetParamterType(enumerableGeneric)}> GetEnumerator()");
+                    output.AppendLine($"{Space,8}{{");
+                    output.AppendLine($"{Space,12}for (int i = 0; i < Length; i++)");
+                    output.AppendLine($"{Space,12}{{");
+                    output.AppendLine($"{Space,16}yield return this[i];");
+                    output.AppendLine($"{Space,12}}}");
+                    output.AppendLine($"{Space,8}}}");
                     output.AppendLine();
-                    output.AppendLine($"{space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{space,8}IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();");
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                    output.AppendLine($"{Space,8}IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();");
                 }
                 yield return typeof(System.Collections.IEnumerable);
                 yield return typeof(IEnumerable<>);
                 yield return enumerableGeneric;
             }
+        }
+        
+        private void GenerateFactoryMethods(IEnumerable<Type> wrappedTypes)
+        {
+            var output = new StringBuilder();
+            var usings = new List<Type>(wrappedTypes) { typeof(Func<>), typeof(Dictionary<,>) };
+            var getOrWrapTypes = wrappedTypes.Where(x => x.FullName is { }).OrderBy(x => x.Name).ToDictionary(x => x.FullName, x => x);
+            var noneInodes = getOrWrapTypes.Values.Where(x => !x.IsGenericType).Where(x => !INodeType.IsAssignableFrom(x));
+            var inodes = getOrWrapTypes.Values.Where(x => !x.IsGenericType).Where(x => INodeType.IsAssignableFrom(x)).ToDictionary(x => x.FullName!, x => x);
+
+            var orderedINodes = CreateOrderedNodes(inodes);
+
+            output.AppendLine();
+            output.AppendLine("namespace AngleSharpWrappers");
+            output.AppendLine("{");
+            output.AppendLine($"{Space,4}#nullable enable");
+            output.AppendLine($"{Space,4}public partial class WrapperFactory");
+            output.AppendLine($"{Space,4}{{");
+
+            output.AppendLine($"{Space,8}/// <summary>");
+            output.AppendLine($"{Space,8}/// Wraps an AngleSharp object in the wrapper specific to it.");
+            output.AppendLine($"{Space,8}/// </summary>");
+            output.AppendLine($"{Space,8}/// <typeparam name=\"T\">The AngleSharp type.</typeparam>");
+            output.AppendLine($"{Space,8}/// <param name=\"initialObject\">The initial object to wrap.</param>");
+            output.AppendLine($"{Space,8}/// <param name=\"objectQuery\">A query method for refreshing the wrapped object.</param>");
+            output.AppendLine($"{Space,8}/// <returns>The <see cref=\"IWrapper\"/> wrapped object.</returns>");
+            output.AppendLine($"{Space,8}internal IWrapper GetOrCreate<T>(T initialObject, Func<T?> objectQuery) where T : class");
+            output.AppendLine($"{Space,8}{{");
+            output.AppendLine($"{Space,12}return initialObject switch");
+            output.AppendLine($"{Space,12}{{");
+            foreach (var type in noneInodes)
+            {
+                var wrapperName = $"{type.Name[1..]}Wrapper";
+                var typeVarName = $"{char.ToLowerInvariant(type.Name[1])}{type.Name[2..]}";
+                output.AppendLine($"{Space,16}{type.Name} _ => WrapperCache.GetOrAdd(initialObject, (io, oq) => new {wrapperName}(this, ({type.Name})io, oq), objectQuery),");
+                usings.Add(type);
+            }
+            output.AppendLine($"{Space,16}INode node => GetOrCreateNode(node, objectQuery),");
+            output.AppendLine($"{Space,16}_ => throw new InvalidOperationException($\"Unknown type. Cannot create wrapper for {{initialObject.GetType()}}\"),");
+            output.AppendLine($"{Space,12}}};");
+            output.AppendLine($"{Space,8}}}");
+            output.AppendLine();
+
+            output.AppendLine($"{Space,8}/// <summary>");
+            output.AppendLine($"{Space,8}/// Wraps an <see cref=\"INode\"/> in the wrapper specific to it.");
+            output.AppendLine($"{Space,8}/// </summary>");
+            output.AppendLine($"{Space,8}/// <typeparam name=\"T\">The node type.</typeparam>");
+            output.AppendLine($"{Space,8}/// <param name=\"initialObject\">The initial node object to wrap</param>");
+            output.AppendLine($"{Space,8}/// <param name=\"objectQuery\">A query method for refreshing the wrapped node object.</param>");
+            output.AppendLine($"{Space,8}/// <returns>The <see cref=\"IWrapper\"/> wrapped node.</returns>");
+            output.AppendLine($"{Space,8}internal IWrapper GetOrCreateNode(INode initialObject, Func<object?> objectQuery)");
+            output.AppendLine($"{Space,8}{{");
+            output.AppendLine($"{Space,12}return initialObject switch");
+            output.AppendLine($"{Space,12}{{");
+
+            while (orderedINodes.Count > 0)
+            {
+                var typeName = orderedINodes.OrderBy(x => x.Value.Count).First().Key;
+                var type = inodes[typeName];
+                orderedINodes.Remove(typeName);
+
+                var wrapperName = $"{type.Name[1..]}Wrapper";
+                var typeVarName = $"{char.ToLowerInvariant(type.Name[1])}{type.Name[2..]}";
+                output.AppendLine($"{Space,16}{type.Name} _ => WrapperCache.GetOrAdd(initialObject, (io, oq) => new {wrapperName}(this, ({type.Name})io, oq), objectQuery),");
+                usings.Add(type);
+            }
+
+            output.AppendLine($"{Space,16}_ => throw new InvalidOperationException($\"Unknown type. Cannot create wrapper for {{initialObject.GetType()}}\"),");
+            output.AppendLine($"{Space,12}}};");
+            output.AppendLine($"{Space,8}}}");
+           
+            output.AppendLine($"{Space,4}}}");
+            output.AppendLine("}");
+
+            AddUsingStatements(usings, output);
+
+            Console.WriteLine($"Writing WrapperFactory.g.cs");
+
+            File.WriteAllText($"WrapperFactory.g.cs", output.ToString());
+        }
+
+        #region Helpers
+
+        private static Dictionary<string, List<Type>> CreateOrderedNodes(Dictionary<string, Type> inodes)
+        {
+            var orderedINodes = inodes.ToDictionary(x => x.Key, x => new List<Type>());
+            foreach (var typeName in orderedINodes.Keys)
+            {
+                var type = inodes[typeName];
+                foreach (var parentType in type.GetInterfaces())
+                {
+                    if (orderedINodes.ContainsKey(parentType.FullName!) && typeName != parentType.FullName)
+                        orderedINodes[parentType.FullName!].Add(parentType);
+                }
+            }
+            return orderedINodes;
         }
 
         private static string GenerateUsings(List<Type> usings)
@@ -720,6 +534,7 @@ namespace AngleSharpWrappers.Generator
             File.WriteAllText($"{wrapperName}.g.cs", output.ToString());
         }
 
+        #endregion
     }
 
     public static class Extensions

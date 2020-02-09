@@ -14,14 +14,13 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="HtmlAllCollectionWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public HtmlAllCollectionWrapper(IHtmlAllCollection initialObject, Func<IHtmlAllCollection> getObject) : base(initialObject, getObject) { }
+        internal HtmlAllCollectionWrapper(WrapperFactory factory, IHtmlAllCollection initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
-        public IElement this[Int32 index] { get => GetOrWrap(HashCode.Combine("this+System.Int32", index), () => WrappedObject[index]); }
+        public IElement this[Int32 index] { get => GetOrWrap(() => WrappedObject[index]); }
 
         /// <inheritdoc/>
-        public IElement this[String id] { get => GetOrWrap(HashCode.Combine("this+System.String", id), () => WrappedObject[id]); }
+        public IElement this[String id] { get => GetOrWrap(() => WrappedObject[id]); }
 
         /// <inheritdoc/>
         public Int32 Length { get => WrappedObject.Length; }

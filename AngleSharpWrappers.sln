@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngleSharpWrappers.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngleSharpWrappers.Generator", "AngleSharpWrappers.Generator\AngleSharpWrappers.Generator.csproj", "{AE2B3A16-9713-4976-AC4F-64C56EDC79E9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngleSharp.Core", "..\repos\AngleSharp\src\AngleSharp\AngleSharp.Core.csproj", "{533CDE46-E837-4AC5-9972-0F4BFD4E24B9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{AE2B3A16-9713-4976-AC4F-64C56EDC79E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE2B3A16-9713-4976-AC4F-64C56EDC79E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE2B3A16-9713-4976-AC4F-64C56EDC79E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{533CDE46-E837-4AC5-9972-0F4BFD4E24B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{533CDE46-E837-4AC5-9972-0F4BFD4E24B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{533CDE46-E837-4AC5-9972-0F4BFD4E24B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{533CDE46-E837-4AC5-9972-0F4BFD4E24B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

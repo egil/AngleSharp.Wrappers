@@ -14,8 +14,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="TextTrackCueListWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public TextTrackCueListWrapper(ITextTrackCueList initialObject, Func<ITextTrackCueList> getObject) : base(initialObject, getObject) { }
+        internal TextTrackCueListWrapper(WrapperFactory factory, ITextTrackCueList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public ITextTrackCue this[Int32 index] { get => WrappedObject[index]; }

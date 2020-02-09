@@ -14,8 +14,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="FileListWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public FileListWrapper(IFileList initialObject, Func<IFileList> getObject) : base(initialObject, getObject) { }
+        internal FileListWrapper(WrapperFactory factory, IFileList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public IFile this[Int32 index] { get => WrappedObject[index]; }

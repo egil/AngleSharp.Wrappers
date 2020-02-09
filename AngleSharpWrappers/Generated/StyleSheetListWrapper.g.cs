@@ -14,8 +14,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Creates an instance of the <see cref="StyleSheetListWrapper"/> type;
         /// </summary>
-        /// <param name="getObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        public StyleSheetListWrapper(IStyleSheetList initialObject, Func<IStyleSheetList> getObject) : base(initialObject, getObject) { }
+        internal StyleSheetListWrapper(WrapperFactory factory, IStyleSheetList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
 
         /// <inheritdoc/>
         public IStyleSheet this[Int32 index] { get => WrappedObject[index]; }

@@ -11,14 +11,21 @@
     <PackageProjectUrl>https://github.com/egil/AngleSharp.Wrappers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/egil/AngleSharp.Wrappers</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <RepositoryBranch>#{BRANCH}#</RepositoryBranch>
+    <RepositoryCommit>#{COMMIT}#</RepositoryCommit>
     <PackageId>AngleSharp.Wrappers</PackageId>
     <Product>AngleSharp.Wrappers</Product>
     <Version>1.0.0-beta-2</Version>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.13.0" />
     <PackageReference Include="AngleSharp.Css" Version="0.13.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,7 +11,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Unwraps all AngleSharp objects in the enumerable, if they have been wrapped.
         /// </summary>
-        public static IEnumerable<T> Unwrap<T>(this IEnumerable<T> nodes)
+        public static IEnumerable<T> Unwrap<T>(this IEnumerable<T> nodes) where T : class
         {
             if (nodes is null) throw new ArgumentNullException(nameof(nodes));
             foreach (var node in nodes)
@@ -23,7 +23,7 @@ namespace AngleSharpWrappers
         /// <summary>
         /// Unwraps an AngleSharp object, if it has been wrapped.
         /// </summary>
-        public static T Unwrap<T>(this T wrappedObject)
+        public static T Unwrap<T>(this T wrappedObject) where T : class
             => wrappedObject is IWrapper<T> wrapper ? wrapper.WrappedObject : wrappedObject;
     }
 }

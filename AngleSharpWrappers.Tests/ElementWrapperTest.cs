@@ -52,7 +52,6 @@ namespace AngleSharpWrappers
             var sut = (ElementWrapper)Factory.Wrap(() => elm);
             var firstWrapped = sut.WrappedObject;
 
-            sut.MarkAsStale();
             elm = Mock.Of<IElement>();
 
             sut.WrappedObject.ShouldNotBe(firstWrapped);
@@ -64,10 +63,9 @@ namespace AngleSharpWrappers
             IElement? elm = Mock.Of<IElement>();
             var sut = (ElementWrapper)Factory.Wrap(() => elm);
 
-            sut.MarkAsStale();
             elm = null;
 
-            Should.Throw<NodeNoLongerAvailableException>(() => sut.WrappedObject);
+            Should.Throw<NodeRemovedException>(() => sut.WrappedObject);
         }
 
         [Fact(DisplayName = "When a method or property on an wrapped node returns an INode, it is wrapped")]
@@ -100,10 +98,8 @@ namespace AngleSharpWrappers
             var elmMock = new Mock<IElement>();
             elmMock.SetupGet(x => x.ParentElement).Returns(() => new Mock<IElement>().Object);
             var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
-            var parentElementWrapper = ((ElementWrapper)sut.ParentElement);
-            var initialWrappedParentNode = parentElementWrapper.WrappedObject;
-
-            Factory.MarkAsStale();
+            var parentElementWrapper = ((ElementWrapper?)sut.ParentElement);
+            var initialWrappedParentNode = parentElementWrapper!.WrappedObject;
 
             initialWrappedParentNode.ShouldNotBeSameAs(parentElementWrapper.WrappedObject);
         }

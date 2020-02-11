@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharpWrappers;
@@ -11,97 +12,50 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class.
     /// </summary>
-    public abstract partial class Wrapper<TWrapped> : IWrapper<TWrapped>
-        where TWrapped : class
+    internal abstract class Wrapper<TWrapped> : IWrapper<TWrapped> where TWrapped : class
     {
-        private readonly Func<object?> _getTargetObject;
         private TWrapped? _wrappedObject;
+
         private WrapperFactory Factory { get; }
 
-        /// <summary>
-        /// Gets the wrapped object.
-        /// </summary>
+        /// <inheritdoc/>
+        public Func<object?> TargetObjectQuery { get; }
+
+        /// <inheritdoc/>
         [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations")]
         public TWrapped WrappedObject
         {
             get
             {
+                EnsureWrappedObject();
                 if (_wrappedObject is null)
-                {
-                    var target = _getTargetObject();
-                    if (target is null) throw new NodeNoLongerAvailableException();
-
-                    if (target is TWrapped wrappedObject)
-                    {
-                        _wrappedObject = wrappedObject;
-                        Factory.AddWrapper(target, this);
-                    }
-                    else
-                        throw new InvalidOperationException("The GetTargetObject func did not return the expected wrapped object type.");
-                }
+                    throw new NodeRemovedException();
                 return _wrappedObject!;
             }
         }
 
+        public bool IsRemoved
+        {
+            get
+            {
+                if (_wrappedObject is null) return true;
+                EnsureWrappedObject();
+                return _wrappedObject is null;
+            }
+        }
 
         /// <summary>
         /// Creates an instance of the <see cref="Wrapper{T}"/> class.
         /// </summary>
-        /// <param name="initialTargetObject">The initial target object</param>
-        /// <param name="getTargetObject">A function that can be used to retrieve a new instance of the wrapped type.</param>
-        protected Wrapper(WrapperFactory factory, TWrapped initialTargetObject, Func<object?> getTargetObject)
+        protected Wrapper(WrapperFactory factory, TWrapped initialTargetObject, Func<object?> query)
         {
+            if (factory is null) throw new ArgumentNullException(nameof(factory));
             if (initialTargetObject is null) throw new ArgumentNullException(nameof(initialTargetObject));
-            if (getTargetObject is null) throw new ArgumentNullException(nameof(getTargetObject));
+            if (query is null) throw new ArgumentNullException(nameof(query));
 
-            _getTargetObject = getTargetObject;
             Factory = factory;
+            TargetObjectQuery = query;
             _wrappedObject = initialTargetObject;
-        }
-
-        /// <inheritdoc/>
-        public void MarkAsStale()
-        {
-            if (_wrappedObject is { })
-            {
-                _wrappedObject = null;
-            }
-        }
-
-        /// <summary>
-        /// Gets or Wraps the type returned by the <paramref name="objectQuery"/>.
-        /// </summary>
-        protected IHtmlCollection<T>? GetOrWrap<T>(Func<IHtmlCollection<T>?> objectQuery) where T : class, IElement
-        {
-            if (objectQuery is null) throw new ArgumentNullException(nameof(objectQuery));
-            IHtmlCollection<T>? result = default;
-
-            var initialObject = objectQuery();
-            if (initialObject is { })
-            {
-                var wrapper = Factory.GetOrCreate(initialObject, objectQuery);
-                result = (IHtmlCollection<T>)wrapper;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets or Wraps the type returned by the <paramref name="objectQuery"/>.
-        /// </summary>
-        protected T? GetOrWrap<T>(Func<T?> objectQuery) where T : class
-        {
-            if (objectQuery is null) throw new ArgumentNullException(nameof(objectQuery));
-            T? result = default;
-
-            var initialObject = objectQuery();
-            if (initialObject is { })
-            {
-                var wrapper = Factory.GetOrCreate(initialObject, objectQuery);
-                result = (T)wrapper;
-            }
-
-            return result;
         }
 
         /// <inheritdoc/>
@@ -112,5 +66,45 @@ namespace AngleSharpWrappers
 
         /// <inheritdoc/>
         public override string ToString() => WrappedObject.ToString();
+
+        /// <summary>
+        /// Gets or Wraps the type returned by the <paramref name="query"/>.
+        /// </summary>
+        protected T? GetOrWrap<T>(Func<T?> query) where T : class
+        {
+            if (query is null) throw new ArgumentNullException(nameof(query));
+            T? result = default;
+
+            var initialObject = query();
+            if (initialObject is { })
+            {
+                var wrapper = Factory.GetOrCreate(initialObject, query);
+                result = (T)wrapper;
+            }
+
+            return result;
+        }
+
+        private void EnsureWrappedObject()
+        {
+            if (_wrappedObject is null) return;
+
+            object? target = null;
+            try { target = TargetObjectQuery(); } catch(Exception) { }
+
+            if (target is TWrapped wrapped)
+            {
+                if (!ReferenceEquals(_wrappedObject, wrapped))
+                {
+                    _wrappedObject = wrapped;
+                    Factory.Refresh(_wrappedObject, wrapped, this);
+                }
+            }
+            else
+            {
+                Factory.Remove(_wrappedObject);
+                _wrappedObject = null;
+            }
+        }
     }
 }

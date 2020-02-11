@@ -7,26 +7,45 @@ using AngleSharp.Dom;
 
 namespace AngleSharpWrappers
 {
-    #nullable disable
+    #nullable enable
     /// <summary>
     /// Represents a wrapper class around <see cref="INodeList"/> type.
     /// </summary>
-    public partial class NodeListWrapper : Wrapper<INodeList>, INodeList, IWrapper
+    internal sealed class NodeListWrapper : Wrapper<INodeList>, INodeList, IWrapper<INodeList>
     {
+        private Dictionary<Int32, INode> _int32Indexer = new Dictionary<Int32, INode>();
+
         /// <summary>
         /// Creates an instance of the <see cref="NodeListWrapper"/> type;
         /// </summary>
-        internal NodeListWrapper(WrapperFactory factory, INodeList initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
+        internal NodeListWrapper(WrapperFactory factory, INodeList initialObject, Func<object?> query) : base(factory, initialObject, query) { }
 
-        /// <inheritdoc/>
-        public INode this[Int32 index] { get => GetOrWrap(() => WrappedObject[index]); }
+        #region Properties and indexers
 
-        /// <inheritdoc/>
+        public INode this[Int32 index]
+        {
+            get
+            {
+                INode? result;
+                if (_int32Indexer.TryGetValue(index, out result) && ((IWrapper)result).IsRemoved)
+                {
+                    _int32Indexer.Remove(index);
+                    result = null;
+                }
+                if (result is null)
+                {
+                    result = GetOrWrap(() => WrappedObject[index])!;
+                    _int32Indexer.Add(index, result);
+                }
+                return result;
+            }
+        }
         public Int32 Length { get => WrappedObject.Length; }
+        #endregion
 
-        /// <inheritdoc/>
-        public void ToHtml(TextWriter writer, IMarkupFormatter formatter)
-            => WrappedObject.ToHtml(writer, formatter);
+        #region Methods
+        public void ToHtml(TextWriter writer, IMarkupFormatter formatter) => WrappedObject.ToHtml(writer, formatter);
+        #endregion
 
         /// <inheritdoc/>
         public IEnumerator<INode> GetEnumerator()

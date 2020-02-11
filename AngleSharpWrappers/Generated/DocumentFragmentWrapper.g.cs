@@ -6,163 +6,144 @@ using AngleSharp.Dom.Events;
 
 namespace AngleSharpWrappers
 {
-    #nullable disable
+    #nullable enable
     /// <summary>
     /// Represents a wrapper class around <see cref="IDocumentFragment"/> type.
     /// </summary>
-    public partial class DocumentFragmentWrapper : Wrapper<IDocumentFragment>, IDocumentFragment, IWrapper
+    internal sealed class DocumentFragmentWrapper : Wrapper<IDocumentFragment>, IDocumentFragment, IWrapper<IDocumentFragment>
     {
+        private INodeList? _childNodes;
+        private INode? _firstChild;
+        private IElement? _firstElementChild;
+        private INode? _lastChild;
+        private IElement? _lastElementChild;
+        private INode? _nextSibling;
+        private IDocument? _owner;
+        private INode? _parent;
+        private IElement? _parentElement;
+        private INode? _previousSibling;
+
         /// <summary>
         /// Creates an instance of the <see cref="DocumentFragmentWrapper"/> type;
         /// </summary>
-        internal DocumentFragmentWrapper(WrapperFactory factory, IDocumentFragment initialObject, Func<object> getObject) : base(factory, initialObject, getObject) { }
+        internal DocumentFragmentWrapper(WrapperFactory factory, IDocumentFragment initialObject, Func<object?> query) : base(factory, initialObject, query) { }
 
-        /// <inheritdoc/>
+        #region Properties and indexers
         public String BaseUri { get => WrappedObject.BaseUri; }
-
-        /// <inheritdoc/>
         public Url BaseUrl { get => WrappedObject.BaseUrl; }
-
-        /// <inheritdoc/>
         public Int32 ChildElementCount { get => WrappedObject.ChildElementCount; }
-
-        /// <inheritdoc/>
-        public INodeList ChildNodes { get => GetOrWrap(() => WrappedObject.ChildNodes); }
-
-        /// <inheritdoc/>
-        public IHtmlCollection<IElement> Children { get => GetOrWrap(() => WrappedObject.Children); }
-
-        /// <inheritdoc/>
-        public INode FirstChild { get => GetOrWrap(() => WrappedObject.FirstChild); }
-
-        /// <inheritdoc/>
-        public IElement FirstElementChild { get => GetOrWrap(() => WrappedObject.FirstElementChild); }
-
-        /// <inheritdoc/>
+        public INodeList? ChildNodes
+        {
+            get
+            {
+                if (_childNodes is null || ((IWrapper)_childNodes).IsRemoved) _childNodes = GetOrWrap(() => WrappedObject.ChildNodes);
+                return _childNodes;
+            }
+        }
+        public IHtmlCollection<IElement> Children { get => WrappedObject.Children; }
+        public INode? FirstChild
+        {
+            get
+            {
+                if (_firstChild is null || ((IWrapper)_firstChild).IsRemoved) _firstChild = GetOrWrap(() => WrappedObject.FirstChild);
+                return _firstChild;
+            }
+        }
+        public IElement? FirstElementChild
+        {
+            get
+            {
+                if (_firstElementChild is null || ((IWrapper)_firstElementChild).IsRemoved) _firstElementChild = GetOrWrap(() => WrappedObject.FirstElementChild);
+                return _firstElementChild;
+            }
+        }
         public NodeFlags Flags { get => WrappedObject.Flags; }
-
-        /// <inheritdoc/>
         public Boolean HasChildNodes { get => WrappedObject.HasChildNodes; }
-
-        /// <inheritdoc/>
-        public INode LastChild { get => GetOrWrap(() => WrappedObject.LastChild); }
-
-        /// <inheritdoc/>
-        public IElement LastElementChild { get => GetOrWrap(() => WrappedObject.LastElementChild); }
-
-        /// <inheritdoc/>
-        public INode NextSibling { get => GetOrWrap(() => WrappedObject.NextSibling); }
-
-        /// <inheritdoc/>
+        public INode? LastChild
+        {
+            get
+            {
+                if (_lastChild is null || ((IWrapper)_lastChild).IsRemoved) _lastChild = GetOrWrap(() => WrappedObject.LastChild);
+                return _lastChild;
+            }
+        }
+        public IElement? LastElementChild
+        {
+            get
+            {
+                if (_lastElementChild is null || ((IWrapper)_lastElementChild).IsRemoved) _lastElementChild = GetOrWrap(() => WrappedObject.LastElementChild);
+                return _lastElementChild;
+            }
+        }
+        public INode? NextSibling
+        {
+            get
+            {
+                if (_nextSibling is null || ((IWrapper)_nextSibling).IsRemoved) _nextSibling = GetOrWrap(() => WrappedObject.NextSibling);
+                return _nextSibling;
+            }
+        }
         public String NodeName { get => WrappedObject.NodeName; }
-
-        /// <inheritdoc/>
         public NodeType NodeType { get => WrappedObject.NodeType; }
-
-        /// <inheritdoc/>
         public String NodeValue { get => WrappedObject.NodeValue; set => WrappedObject.NodeValue = value;}
-
-        /// <inheritdoc/>
-        public IDocument Owner { get => GetOrWrap(() => WrappedObject.Owner); }
-
-        /// <inheritdoc/>
-        public INode Parent { get => GetOrWrap(() => WrappedObject.Parent); }
-
-        /// <inheritdoc/>
-        public IElement ParentElement { get => GetOrWrap(() => WrappedObject.ParentElement); }
-
-        /// <inheritdoc/>
-        public INode PreviousSibling { get => GetOrWrap(() => WrappedObject.PreviousSibling); }
-
-        /// <inheritdoc/>
+        public IDocument? Owner
+        {
+            get
+            {
+                if (_owner is null || ((IWrapper)_owner).IsRemoved) _owner = GetOrWrap(() => WrappedObject.Owner);
+                return _owner;
+            }
+        }
+        public INode? Parent
+        {
+            get
+            {
+                if (_parent is null || ((IWrapper)_parent).IsRemoved) _parent = GetOrWrap(() => WrappedObject.Parent);
+                return _parent;
+            }
+        }
+        public IElement? ParentElement
+        {
+            get
+            {
+                if (_parentElement is null || ((IWrapper)_parentElement).IsRemoved) _parentElement = GetOrWrap(() => WrappedObject.ParentElement);
+                return _parentElement;
+            }
+        }
+        public INode? PreviousSibling
+        {
+            get
+            {
+                if (_previousSibling is null || ((IWrapper)_previousSibling).IsRemoved) _previousSibling = GetOrWrap(() => WrappedObject.PreviousSibling);
+                return _previousSibling;
+            }
+        }
         public String TextContent { get => WrappedObject.TextContent; set => WrappedObject.TextContent = value;}
+        #endregion
 
-        /// <inheritdoc/>
-        public void AddEventListener(String type, DomEventHandler callback, Boolean capture)
-            => WrappedObject.AddEventListener(type, callback, capture);
-
-        /// <inheritdoc/>
-        public void Append(INode[] nodes)
-            => WrappedObject.Append(nodes);
-
-        /// <inheritdoc/>
-        public INode AppendChild(INode child)
-            => GetOrWrap(() => WrappedObject.AppendChild(child));
-
-        /// <inheritdoc/>
-        public INode Clone(Boolean deep)
-            => GetOrWrap(() => WrappedObject.Clone(deep));
-
-        /// <inheritdoc/>
-        public DocumentPositions CompareDocumentPosition(INode otherNode)
-            => WrappedObject.CompareDocumentPosition(otherNode);
-
-        /// <inheritdoc/>
-        public Boolean Contains(INode otherNode)
-            => WrappedObject.Contains(otherNode);
-
-        /// <inheritdoc/>
-        public Boolean Dispatch(Event ev)
-            => WrappedObject.Dispatch(ev);
-
-        /// <inheritdoc/>
-        public Boolean Equals(INode otherNode)
-            => WrappedObject.Equals(otherNode);
-
-        /// <inheritdoc/>
-        public IElement GetElementById(String elementId)
-            => GetOrWrap(() => WrappedObject.GetElementById(elementId));
-
-        /// <inheritdoc/>
-        public INode InsertBefore(INode newElement, INode referenceElement)
-            => GetOrWrap(() => WrappedObject.InsertBefore(newElement, referenceElement));
-
-        /// <inheritdoc/>
-        public void InvokeEventListener(Event ev)
-            => WrappedObject.InvokeEventListener(ev);
-
-        /// <inheritdoc/>
-        public Boolean IsDefaultNamespace(String namespaceUri)
-            => WrappedObject.IsDefaultNamespace(namespaceUri);
-
-        /// <inheritdoc/>
-        public String LookupNamespaceUri(String prefix)
-            => WrappedObject.LookupNamespaceUri(prefix);
-
-        /// <inheritdoc/>
-        public String LookupPrefix(String namespaceUri)
-            => WrappedObject.LookupPrefix(namespaceUri);
-
-        /// <inheritdoc/>
-        public void Normalize()
-            => WrappedObject.Normalize();
-
-        /// <inheritdoc/>
-        public void Prepend(INode[] nodes)
-            => WrappedObject.Prepend(nodes);
-
-        /// <inheritdoc/>
-        public IElement QuerySelector(String selectors)
-            => GetOrWrap(() => WrappedObject.QuerySelector(selectors));
-
-        /// <inheritdoc/>
-        public IHtmlCollection<IElement> QuerySelectorAll(String selectors)
-            => GetOrWrap(() => WrappedObject.QuerySelectorAll(selectors));
-
-        /// <inheritdoc/>
-        public INode RemoveChild(INode child)
-            => GetOrWrap(() => WrappedObject.RemoveChild(child));
-
-        /// <inheritdoc/>
-        public void RemoveEventListener(String type, DomEventHandler callback, Boolean capture)
-            => WrappedObject.RemoveEventListener(type, callback, capture);
-
-        /// <inheritdoc/>
-        public INode ReplaceChild(INode newChild, INode oldChild)
-            => GetOrWrap(() => WrappedObject.ReplaceChild(newChild, oldChild));
-
-        /// <inheritdoc/>
-        public void ToHtml(TextWriter writer, IMarkupFormatter formatter)
-            => WrappedObject.ToHtml(writer, formatter);
+        #region Methods
+        public void AddEventListener(String type, DomEventHandler callback, Boolean capture) => WrappedObject.AddEventListener(type, callback, capture);
+        public void Append(INode[] nodes) => WrappedObject.Append(nodes);
+        public INode AppendChild(INode child) => WrappedObject.AppendChild(child);
+        public INode Clone(Boolean deep) => WrappedObject.Clone(deep);
+        public DocumentPositions CompareDocumentPosition(INode otherNode) => WrappedObject.CompareDocumentPosition(otherNode);
+        public Boolean Contains(INode otherNode) => WrappedObject.Contains(otherNode);
+        public Boolean Dispatch(Event ev) => WrappedObject.Dispatch(ev);
+        public Boolean Equals(INode otherNode) => WrappedObject.Equals(otherNode);
+        public IElement GetElementById(String elementId) => WrappedObject.GetElementById(elementId);
+        public INode InsertBefore(INode newElement, INode referenceElement) => WrappedObject.InsertBefore(newElement, referenceElement);
+        public void InvokeEventListener(Event ev) => WrappedObject.InvokeEventListener(ev);
+        public Boolean IsDefaultNamespace(String namespaceUri) => WrappedObject.IsDefaultNamespace(namespaceUri);
+        public String LookupNamespaceUri(String prefix) => WrappedObject.LookupNamespaceUri(prefix);
+        public String LookupPrefix(String namespaceUri) => WrappedObject.LookupPrefix(namespaceUri);
+        public void Normalize() => WrappedObject.Normalize();
+        public void Prepend(INode[] nodes) => WrappedObject.Prepend(nodes);
+        public IElement QuerySelector(String selectors) => WrappedObject.QuerySelector(selectors);
+        public IHtmlCollection<IElement> QuerySelectorAll(String selectors) => WrappedObject.QuerySelectorAll(selectors);
+        public INode RemoveChild(INode child) => WrappedObject.RemoveChild(child);
+        public void RemoveEventListener(String type, DomEventHandler callback, Boolean capture) => WrappedObject.RemoveEventListener(type, callback, capture);
+        public INode ReplaceChild(INode newChild, INode oldChild) => WrappedObject.ReplaceChild(newChild, oldChild);
+        public void ToHtml(TextWriter writer, IMarkupFormatter formatter) => WrappedObject.ToHtml(writer, formatter);
+        #endregion
     }
 }

@@ -7,14 +7,15 @@ namespace AngleSharpWrappers
     /// </summary>
     public interface IWrapper
     {
-        /// <summary>
-        /// Marks the wrapped object as stale, and forces the wrapper to retrieve it again.
-        /// </summary>
-        void MarkAsStale();
+        bool IsRemoved { get; }
     }
 
-    public interface IWrapper<T> : IWrapper
+    /// <inheritdoc/>
+    public interface IWrapper<out T> : IWrapper where T : class
     {
+        /// <summary>
+        /// Gets the wrapped object.
+        /// </summary>
         T WrappedObject { get; }
     }
 }

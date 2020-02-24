@@ -1,107 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using Moq;
-using Xunit;
 using Shouldly;
-using AngleSharp.Html.Dom;
+using Xunit;
 
 namespace AngleSharpWrappers
 {
+
     public class ElementWrapperTest
     {
-        public static IEnumerable<object[]> GetInterfaceMethods(Type type) => type.GetInterfaceMethods().Select(x => new[] { x });
+        private HtmlParser Parser { get; } = new HtmlParser();
 
-        public WrapperFactory Factory { get; } = new WrapperFactory();
-
-
-        [Theory(DisplayName = "Forwards all method and property calls to wrapped node")]
-        [MemberData(nameof(GetInterfaceMethods), typeof(IElement))]
-        public void Test001(MethodInfo method)
+        [Fact(DisplayName = "QuerySelectorAll works the same with wrapped and non-wrapped element")]
+        public void Test001()
         {
-            var elmMock = new Mock<IElement>();
-            var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
-            var args = method.CreateMethodArguments();
+            var elm = Parser.Parse(
+                "<div>" +
+                "<div id=\"foo\"></div>" +
+                "<div id=\"bar\"></div>" +
+                "</div>").OfType<IElement>().Single();
 
-            method.Invoke(sut, args);
+            var sut = WrapperFactory.Create(new TestFactory<IElement>(() => elm));
 
-            var inv = elmMock.Invocations[0];
-            inv.Arguments.ShouldBe(args);
-            inv.Method.ShouldBe(method);
+            var sutQueryRes = sut.QuerySelectorAll("div");
+            var elmQueryRes = elm.QuerySelectorAll("div");
+
+            sutQueryRes.ShouldBe(elmQueryRes);
         }
 
-        [Fact(DisplayName = "Wrapped node is internally available")]
+        [Fact(DisplayName = "QuerySelector works the same with wrapped and non-wrapped element")]
         public void Test002()
         {
-            var elmMock = Mock.Of<IElement>();
+            var elm = Parser.Parse(
+                "<div>" +
+                "<div id=\"foo\"></div>" +
+                "<div id=\"bar\"></div>" +
+                "</div>").OfType<IElement>().Single();
 
-            var sut = (ElementWrapper)Factory.Wrap(() => elmMock);
+            var sut = WrapperFactory.Create(new TestFactory<IElement>(() => elm));
 
-            sut.WrappedObject.ShouldBe(elmMock);
-        }
+            var sutQueryRes = sut.QuerySelector("#foo");
+            var elmQueryRes = elm.QuerySelector("#foo");
 
-        [Fact(DisplayName = "Wrapper refreshes wrapped node after MarkAsStale is called")]
-        public void Test003()
-        {
-            IElement elm = Mock.Of<IElement>();
-            var sut = (ElementWrapper)Factory.Wrap(() => elm);
-            var firstWrapped = sut.WrappedObject;
-
-            elm = Mock.Of<IElement>();
-
-            sut.WrappedObject.ShouldNotBe(firstWrapped);
-        }
-
-        [Fact(DisplayName = "When a wrapped node is no longer available, accessing methods or properties throws ElementNoLongerAvailableException")]
-        public void Test004()
-        {
-            IElement? elm = Mock.Of<IElement>();
-            var sut = (ElementWrapper)Factory.Wrap(() => elm);
-
-            elm = null;
-
-            Should.Throw<NodeRemovedException>(() => sut.WrappedObject);
-        }
-
-        [Fact(DisplayName = "When a method or property on an wrapped node returns an INode, it is wrapped")]
-        public void Test005()
-        {
-            var elmMock = new Mock<IElement>();
-            var elmParent = Mock.Of<IElement>();
-            elmMock.SetupGet(x => x.ParentElement).Returns(elmParent);
-            var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
-
-            var parent = sut.ParentElement;
-
-            parent.ShouldBeOfType<ElementWrapper>().WrappedObject.ShouldBe(elmParent);
-        }
-
-        [Fact(DisplayName = "The same wrapper is used every time")]
-        public void Test006()
-        {
-            var elmMock = new Mock<IElement>();
-            var parentElm = Mock.Of<IElement>();
-            elmMock.SetupGet(x => x.ParentElement).Returns(() => parentElm);
-            var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
-
-            sut.ParentElement.ShouldBeSameAs(sut.ParentElement);
-        }
-
-        [Fact(DisplayName = "Nested wrappers also gets marked as stale when the parent does")]
-        public void Test007()
-        {
-            var elmMock = new Mock<IElement>();
-            elmMock.SetupGet(x => x.ParentElement).Returns(() => new Mock<IElement>().Object);
-            var sut = (ElementWrapper)Factory.Wrap(() => elmMock.Object);
-            var parentElementWrapper = ((ElementWrapper?)sut.ParentElement);
-            var initialWrappedParentNode = parentElementWrapper!.WrappedObject;
-
-            initialWrappedParentNode.ShouldNotBeSameAs(parentElementWrapper.WrappedObject);
+            sutQueryRes.ShouldBe(elmQueryRes);
         }
     }
 }

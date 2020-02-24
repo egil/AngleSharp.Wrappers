@@ -18,7 +18,7 @@
       A library of wrappers for AngleSharp. Allows you to replace a real AngleSharp DOM tree but still keep the queried/returned node references. Built for and used by https://github.com/egil/razor-components-testing-library.
     </Description>
     <Product>AngleSharp.Wrappers</Product>
-    <Version>1.0.0-beta-3</Version>
+    <Version>1.0.0</Version>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>

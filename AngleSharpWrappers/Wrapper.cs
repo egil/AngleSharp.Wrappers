@@ -1,110 +1,57 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
 using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
-using AngleSharpWrappers;
 
 namespace AngleSharpWrappers
 {
     /// <summary>
-    /// Represents a wrapper class.
+    /// Represents a wrapper <see cref="IElement"/>.
     /// </summary>
-    internal abstract class Wrapper<TWrapped> : IWrapper<TWrapped> where TWrapped : class
+    public abstract class Wrapper<TElement> : IWrapper<TElement> where TElement : class, INode
     {
-        private TWrapped? _wrappedObject;
+        private readonly IElementFactory<TElement> _elementFactory;
 
-        private WrapperFactory Factory { get; }
-
-        /// <inheritdoc/>
-        public Func<object?> TargetObjectQuery { get; }
-
-        /// <inheritdoc/>
-        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations")]
-        public TWrapped WrappedObject
-        {
-            get
-            {
-                EnsureWrappedObject();
-                if (_wrappedObject is null)
-                    throw new NodeRemovedException();
-                return _wrappedObject!;
-            }
-        }
-
-        public bool IsRemoved
-        {
-            get
-            {
-                if (_wrappedObject is null) return true;
-                EnsureWrappedObject();
-                return _wrappedObject is null;
-            }
-        }
+        /// <summary>
+        /// Gets the wrapped element.
+        /// </summary>
+        /// <exception cref="ElementRemovedException">If the element is no longer available</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
+        [DebuggerHidden]
+        public TElement WrappedElement => _elementFactory.GetElement();
 
         /// <summary>
         /// Creates an instance of the <see cref="Wrapper{T}"/> class.
         /// </summary>
-        protected Wrapper(WrapperFactory factory, TWrapped initialTargetObject, Func<object?> query)
+        protected Wrapper(IElementFactory<TElement> elementFactory)
         {
-            if (factory is null) throw new ArgumentNullException(nameof(factory));
-            if (initialTargetObject is null) throw new ArgumentNullException(nameof(initialTargetObject));
-            if (query is null) throw new ArgumentNullException(nameof(query));
+            if (elementFactory is null) throw new ArgumentNullException(nameof(elementFactory));
 
-            Factory = factory;
-            TargetObjectQuery = query;
-            _wrappedObject = initialTargetObject;
+            _elementFactory = elementFactory;
         }
 
-        /// <inheritdoc/>
-        public override bool Equals(object obj) => WrappedObject.Equals(obj);
+        public override bool Equals(object obj) => WrappedElement.Equals(obj);
 
-        /// <inheritdoc/>
-        public override int GetHashCode() => WrappedObject.GetHashCode();
+        public override int GetHashCode() => WrappedElement.GetHashCode();
 
-        /// <inheritdoc/>
-        public override string ToString() => WrappedObject.ToString();
-
-        /// <summary>
-        /// Gets or Wraps the type returned by the <paramref name="query"/>.
-        /// </summary>
-        protected T? GetOrWrap<T>(Func<T?> query) where T : class
+        public static bool operator ==(Wrapper<TElement> x, TElement y)
         {
-            if (query is null) throw new ArgumentNullException(nameof(query));
-            T? result = default;
-
-            var initialObject = query();
-            if (initialObject is { })
-            {
-                var wrapper = Factory.GetOrCreate(initialObject, query);
-                result = (T)wrapper;
-            }
-
-            return result;
+            return x.WrappedElement == y && x.WrappedElement == y;
         }
 
-        private void EnsureWrappedObject()
+        public static bool operator !=(Wrapper<TElement> x, TElement y)
         {
-            if (_wrappedObject is null) return;
+            return !(x == y);
+        }
 
-            object? target = null;
-            try { target = TargetObjectQuery(); } catch(Exception) { }
+        public static bool operator ==(TElement x, Wrapper<TElement> y)
+        {
+            return x == y.WrappedElement && x == y.WrappedElement;
+        }
 
-            if (target is TWrapped wrapped)
-            {
-                if (!ReferenceEquals(_wrappedObject, wrapped))
-                {
-                    _wrappedObject = wrapped;
-                    Factory.Refresh(_wrappedObject, wrapped, this);
-                }
-            }
-            else
-            {
-                Factory.Remove(_wrappedObject);
-                _wrappedObject = null;
-            }
+        public static bool operator !=(TElement x, Wrapper<TElement> y)
+        {
+            return !(x == y);
         }
     }
 }

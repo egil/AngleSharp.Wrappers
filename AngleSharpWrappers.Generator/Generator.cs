@@ -16,18 +16,10 @@ using AngleSharp.Text;
 
 namespace AngleSharpWrappers.Generator
 {
-    // TODO:
-    // - Only wrap properties return values
-    // - Create a wrap method that wraps from the root/document and down on every refresh
-    // - When walking down the tree, go in breath first order - sibling
-    // - Verify that element is not an IWrapper before being wrapped - should not happen
-    // - Refresh wrappers from anywhere in tree causes all wrappers in tree to refresh from the top down
-    // - When a wrappers node is removed from the dom tree after a refresh, discard the wrapper and have it always throw on access.
-    // - BEHAVE LIKE ANGLESHARP WOULD IF UPDATED IN MEMORY
     internal class Generator
     {
         private const char Space = ' ';
-        private static readonly Type WrapTargetType = typeof(IMarkupFormattable);
+        private static readonly Type WrapTargetType = typeof(IElement);
 
         private Dictionary<string, Type> WrappedTypes { get; }
 
@@ -38,8 +30,6 @@ namespace AngleSharpWrappers.Generator
             var allInterfaces = WrapTargetType.Assembly.GetTypes().Where(x => x.IsInterface).ToList();
 
             WrappedTypes = allInterfaces.Where(x => WrapTargetType.IsAssignableFrom(x)).ToDictionary(x => GetTypeKey(x), x => x);
-
-            WrappedTypes.Add(iattrType.FullName!, iattrType);
 
             foreach (var item in WrappedTypes.Values)
             {
@@ -81,50 +71,20 @@ namespace AngleSharpWrappers.Generator
             output.AppendLine($"{Space,4}/// <summary>");
             output.AppendLine($"{Space,4}/// Represents a wrapper class around <see cref=\"{name}{genericArgs.Replace('<', '{').Replace('>', '}')}\"/> type.");
             output.AppendLine($"{Space,4}/// </summary>");
-            output.AppendLine($"{Space,4}internal sealed class {wrapperName}{genericArgs} : Wrapper<{name}{genericArgs}>, {name}{genericArgs}, IWrapper<{name}{genericArgs}>");
+            output.AppendLine($"{Space,4}public sealed class {wrapperName}{genericArgs} : Wrapper<{name}{genericArgs}>, {name}{genericArgs}");
             if (!string.IsNullOrEmpty(genericConstraints))
                 output.AppendLine($"{Space,8}{genericConstraints}");
             output.AppendLine($"{Space,4}{{");
 
-            foreach (var t in CreateFields(type, output)) yield return t;
-
             output.AppendLine($"{Space,8}/// <summary>");
             output.AppendLine($"{Space,8}/// Creates an instance of the <see cref=\"{wrapperName}{genericArgs.Replace('<', '{').Replace('>', '}')}\"/> type;");
             output.AppendLine($"{Space,8}/// </summary>");
-            output.AppendLine($"{Space,8}internal {wrapperName}(WrapperFactory factory, {name}{genericArgs} initialObject, Func<object?> query) : base(factory, initialObject, query) {{ }}");
+            output.AppendLine($"{Space,8}public {wrapperName}(IElementFactory<{name}{genericArgs}> elementFactory) : base(elementFactory) {{ }}");
 
             yield return type;
+            yield return typeof(DebuggerHiddenAttribute);
             foreach (var t in type.GetGenericArguments()) yield return t;
             foreach (var t in type.GetGenericArguments().SelectMany(x => x.GetGenericParameterConstraints())) yield return t;
-        }
-
-        private IEnumerable<Type> CreateFields(Type type, StringBuilder output)
-        {
-            var properties = GetProperties(type);
-            var indexers = properties.Where(x => x.GetIndexParameters().Length > 0).OrderBy(x => x.Name).ToList();
-            foreach (var prop in indexers)
-            {
-                if (!IsNonWrappedType(prop.PropertyType) && prop.CanRead)
-                {
-                    var indexParam = prop.GetIndexParameters().Single();
-                    var idxTypeName = GetReturnType(indexParam.ParameterType);
-                    var fieldName = $"_{char.ToLowerInvariant(idxTypeName[0])}{idxTypeName[1..]}Indexer";
-
-                    output.AppendLine($"{Space,8}private Dictionary<{idxTypeName}, {prop.PropertyType.Name}> {fieldName} = new Dictionary<{idxTypeName}, {prop.PropertyType.Name}>();");
-                }
-            }
-
-            foreach (var prop in properties.Where(x => x.GetIndexParameters().Length == 0).OrderBy(x => x.Name))
-            {
-                if (!IsNonWrappedType(prop.PropertyType) && prop.CanRead)
-                {
-                    var fieldName = $"_{char.ToLowerInvariant(prop.Name[0])}{prop.Name[1..]}";
-                    output.AppendLine($"{Space,8}private {prop.PropertyType.Name}? {fieldName};");
-                }
-            }
-            output.AppendLine();
-
-            if (indexers.Count > 0) yield return typeof(Dictionary<,>);
         }
 
         private static void CreateClassEnd(StringBuilder output)
@@ -148,8 +108,8 @@ namespace AngleSharpWrappers.Generator
                 var evtType = GetReturnType(evt.EventHandlerType);
 
                 var castType = evtGroup.Count() > 1 && evtGroup.Select(x => x.DeclaringType!.Name).Distinct().Count() > 1
-                    ? $"(({evt.DeclaringType!.Name})WrappedObject)"
-                    : "WrappedObject";
+                    ? $"(({evt.DeclaringType!.Name})WrappedElement)"
+                    : "WrappedElement";
 
                 output.AppendLine($"{Space,8}public event {evtType} {evt.Name} {{ add => {castType}.{evt.Name} += value; remove => {castType}.{evt.Name} -= value; }}");
 
@@ -182,56 +142,15 @@ namespace AngleSharpWrappers.Generator
                 {
                     output.AppendLine();
                     var indexParam = prop.GetIndexParameters().Single();
-                    var genericReturnType = GetGenericArgsList(prop.PropertyType);
-                    var paramType = prop.PropertyType;
+                    //var genericReturnType = GetGenericArgsList(prop.PropertyType);
+                    //var paramType = prop.PropertyType;
 
-                    var getter = " ";
-                    var setter = prop.CanWrite
-                        ? $" set => WrappedObject[{indexParam.Name}] = value;"
-                        : " ";
+                    var getter = prop.CanRead ? $" get => WrappedElement[{indexParam.Name}];" : " ";
+                    var setter = prop.CanWrite ? $" set => WrappedElement[{indexParam.Name}] = value;" : " ";
                     var idxTypeName = GetReturnType(indexParam.ParameterType);
 
-                    if (IsNonWrappedType(paramType))
-                    {
-                        if (prop.CanRead) getter = $" get => WrappedObject[{indexParam.Name}];";
-                        output.AppendLine($"{Space,8}public {GetReturnType(prop.PropertyType)} this[{idxTypeName} {indexParam.Name}] {{{getter}{setter}}}");
-                    }
-                    else
-                    {
-
-                        if (prop.CanRead)
-                        {
-                            var fieldName = $"_{char.ToLowerInvariant(idxTypeName[0])}{idxTypeName[1..]}Indexer";
-                            var returnType = prop.PropertyType.Name;
-
-                            output.AppendLine($"{Space,8}public {GetReturnType(prop.PropertyType)} this[{idxTypeName} {indexParam.Name}]");
-                            output.AppendLine($"{Space,8}{{");
-                            output.AppendLine($"{Space,12}get");
-                            output.AppendLine($"{Space,12}{{");
-                            output.AppendLine($"{Space,16}{returnType}? result;");
-                            output.AppendLine($"{Space,16}if ({fieldName}.TryGetValue({indexParam.Name}, out result) && ((IWrapper)result).IsRemoved)");
-                            output.AppendLine($"{Space,16}{{");
-                            output.AppendLine($"{Space,20}{fieldName}.Remove({indexParam.Name});");
-                            output.AppendLine($"{Space,20}result = null;");
-                            output.AppendLine($"{Space,16}}}");
-                            output.AppendLine($"{Space,16}if (result is null)");
-                            output.AppendLine($"{Space,16}{{");
-                            output.AppendLine($"{Space,20}result = GetOrWrap(() => WrappedObject[{indexParam.Name}])!;");
-                            output.AppendLine($"{Space,20}{fieldName}.Add({indexParam.Name}, result);");
-                            output.AppendLine($"{Space,16}}}");
-                            output.AppendLine($"{Space,16}return result;");
-                            output.AppendLine($"{Space,12}}}");
-                            if (prop.CanWrite)
-                            {
-                                output.AppendLine($"{Space,12}{setter.Trim()}");
-                            }
-                            output.AppendLine($"{Space,8}}}");
-                        }
-                        else
-                        {
-                            output.AppendLine($"{Space,8}public {GetReturnType(prop.PropertyType)} this[{idxTypeName} {indexParam.Name}] {{{getter}{setter}}}");
-                        }
-                    }
+                    output.AppendLine($"{Space,8}[DebuggerHidden]");
+                    output.AppendLine($"{Space,8}public {GetReturnType(prop.PropertyType)} this[{idxTypeName} {indexParam.Name}] {{{getter}{setter}}}");
 
                     yield return indexParam.ParameterType;
 
@@ -247,40 +166,11 @@ namespace AngleSharpWrappers.Generator
                         ? $"<{string.Join(",", prop.PropertyType.GetGenericArguments().Select(x => x.Name))}>"
                         : string.Empty;
 
-                    var getter = prop.CanRead ? $" get => WrappedObject.{prop.Name};" : " ";
-                    var setter = prop.CanWrite ? $" set => WrappedObject.{prop.Name} = value;" : " ";
-
-                    if (IsNonWrappedType(prop.PropertyType))
-                    {
-                        output.AppendLine($"{Space,8}public {propType} {prop.Name} {{{getter}{setter}}}");
-                    }
-                    else
-                    {
-                        if (prop.CanRead)
-                        {
-                            var fieldName = $"_{char.ToLowerInvariant(prop.Name[0])}{prop.Name[1..]}";
-                            var wrapperType = GetWrapperClassName(prop.PropertyType);
-
-                            getter = $" get => ({fieldName} ?? ({fieldName} = GetOrWrap(() => WrappedObject.{prop.Name})));";
-
-                            output.AppendLine($"{Space,8}public {propType}? {prop.Name}");
-                            output.AppendLine($"{Space,8}{{");
-                            output.AppendLine($"{Space,12}get");
-                            output.AppendLine($"{Space,12}{{");
-                            output.AppendLine($"{Space,16}if ({fieldName} is null || ((IWrapper){fieldName}).IsRemoved) {fieldName} = GetOrWrap(() => WrappedObject.{prop.Name});");
-                            output.AppendLine($"{Space,16}return {fieldName};");
-                            output.AppendLine($"{Space,12}}}");
-                            if (prop.CanWrite)
-                            {
-                                output.AppendLine($"{Space,12}{setter.Trim()}");
-                            }
-                            output.AppendLine($"{Space,8}}}");
-                        }
-                        else
-                        {
-                            output.AppendLine($"{Space,8}public {propType}? {prop.Name} {{{getter}{setter}}}");
-                        }
-                    }
+                    var getter = prop.CanRead ? $" get => WrappedElement.{prop.Name};" : " ";
+                    var setter = prop.CanWrite ? $" set => WrappedElement.{prop.Name} = value;" : " ";
+                    
+                    output.AppendLine($"{Space,8}[DebuggerHidden]");
+                    output.AppendLine($"{Space,8}public {propType} {prop.Name} {{{getter}{setter}}}");
 
                     yield return prop.PropertyType;
                     foreach (var t in prop.PropertyType.GetGenericArguments()) yield return t;
@@ -302,19 +192,8 @@ namespace AngleSharpWrappers.Generator
                 var argsStr = string.Join(", ", parameters.Select(x => x.Name));
                 var returnType = GetReturnType(method.ReturnType);
 
-                output.AppendLine($"{Space,8}public {returnType} {method.Name}({paramStr}) => WrappedObject.{method.Name}({argsStr});");
-                //if (IsNonWrappedType(method.ReturnType))
-                //{
-                //    output.AppendLine($"{Space,8}/// <inheritdoc/>");
-                //    output.AppendLine($"{Space,8}public {returnType} {method.Name}({paramStr})");
-                //    output.AppendLine($"{Space,12}=> WrappedObject.{method.Name}({argsStr});");
-                //}
-                //else
-                //{
-                //    output.AppendLine($"{Space,8}/// <inheritdoc/>");
-                //    output.AppendLine($"{Space,8}public {returnType} {method.Name}({paramStr})");
-                //    output.AppendLine($"{Space,12}=> GetOrWrap(() => WrappedObject.{method.Name}({argsStr}));");
-                //}
+                output.AppendLine($"{Space,8}[DebuggerHidden]");
+                output.AppendLine($"{Space,8}public {returnType} {method.Name}({paramStr}) => WrappedElement.{method.Name}({argsStr});");
 
                 yield return method.ReturnType;
                 foreach (var t in method.ReturnType.GetGenericArguments()) yield return t;
@@ -339,28 +218,12 @@ namespace AngleSharpWrappers.Generator
                     enumerableTargetType = enumerableTargetType.GetGenericParameterConstraints().Single();
                 }
 
-                if (IsNonWrappedType(enumerableTargetType))
-                {
-                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{Space,8}public IEnumerator<{GetParamterType(enumerableGeneric)}> GetEnumerator() => WrappedObject.GetEnumerator();");
-                    output.AppendLine();
-                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{Space,8}IEnumerator IEnumerable.GetEnumerator() => WrappedObject.GetEnumerator();");
-                }
-                else
-                {
-                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{Space,8}public IEnumerator<{GetParamterType(enumerableGeneric)}> GetEnumerator()");
-                    output.AppendLine($"{Space,8}{{");
-                    output.AppendLine($"{Space,12}for (int i = 0; i < Length; i++)");
-                    output.AppendLine($"{Space,12}{{");
-                    output.AppendLine($"{Space,16}yield return this[i];");
-                    output.AppendLine($"{Space,12}}}");
-                    output.AppendLine($"{Space,8}}}");
-                    output.AppendLine();
-                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
-                    output.AppendLine($"{Space,8}IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();");
-                }
+                output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                output.AppendLine($"{Space,8}public IEnumerator<{GetParamterType(enumerableGeneric)}> GetEnumerator() => WrappedElement.GetEnumerator();");
+                output.AppendLine();
+                output.AppendLine($"{Space,8}/// <inheritdoc/>");
+                output.AppendLine($"{Space,8}IEnumerator IEnumerable.GetEnumerator() => WrappedElement.GetEnumerator();");
+
                 yield return typeof(System.Collections.IEnumerable);
                 yield return typeof(IEnumerable<>);
                 yield return enumerableGeneric;
@@ -380,19 +243,21 @@ namespace AngleSharpWrappers.Generator
             output.AppendLine("namespace AngleSharpWrappers");
             output.AppendLine("{");
             output.AppendLine($"{Space,4}#nullable enable");
-            output.AppendLine($"{Space,4}public sealed partial class WrapperFactory");
+            output.AppendLine($"{Space,4}/// <summary>");
+            output.AppendLine($"{Space,4}/// A factory for creating element wrappers.");
+            output.AppendLine($"{Space,4}/// </summary>");
+            output.AppendLine($"{Space,4}public static class WrapperFactory");
             output.AppendLine($"{Space,4}{{");
 
             output.AppendLine($"{Space,8}/// <summary>");
-            output.AppendLine($"{Space,8}/// Wraps an <see cref=\"INode\"/> in the wrapper specific to it.");
+            output.AppendLine($"{Space,8}/// Wraps an <see cref=\"IElement\"/> in the wrapper specific to it.");
             output.AppendLine($"{Space,8}/// </summary>");
-            output.AppendLine($"{Space,8}/// <typeparam name=\"T\">The node type.</typeparam>");
-            output.AppendLine($"{Space,8}/// <param name=\"initialObject\">The initial node object to wrap</param>");
-            output.AppendLine($"{Space,8}/// <param name=\"objectQuery\">A query method for refreshing the wrapped node object.</param>");
-            output.AppendLine($"{Space,8}/// <returns>The <see cref=\"IWrapper\"/> wrapped node.</returns>");
-            output.AppendLine($"{Space,8}internal IWrapper GetOrCreate<T>(T initialObject, Func<object?> query) where T : class");
+            output.AppendLine($"{Space,8}/// <typeparam name=\"T\">The element type.</typeparam>");
+            output.AppendLine($"{Space,8}/// <param name=\"elementFactory\">The factory that provides the wrapped element.</param>");
+            output.AppendLine($"{Space,8}/// <returns>The wrapped <see cref=\"IElement\"/>.</returns>");
+            output.AppendLine($"{Space,8}public static T Create<T>(IElementFactory<T> factory) where T : class, INode");
             output.AppendLine($"{Space,8}{{");
-            output.AppendLine($"{Space,12}return initialObject switch");
+            output.AppendLine($"{Space,12}IElement result = factory switch");
             output.AppendLine($"{Space,12}{{");
 
             while (orderedINodes.Count > 0)
@@ -403,12 +268,13 @@ namespace AngleSharpWrappers.Generator
 
                 var wrapperName = $"{type.Name[1..]}Wrapper";
                 var typeVarName = $"{char.ToLowerInvariant(type.Name[1])}{type.Name[2..]}";
-                output.AppendLine($"{Space,16}{type.Name} {typeVarName} => GetOrAdd<{type.Name}>({typeVarName}, query, (f, o, q) => new {wrapperName}(f, o, q)),");
+                output.AppendLine($"{Space,16}IElementFactory<{type.Name}> {typeVarName}Factory => new {wrapperName}({typeVarName}Factory),");
                 usings.Add(type);
             }
 
-            output.AppendLine($"{Space,16}_ => throw new InvalidOperationException($\"Unknown type. Cannot create wrapper for {{initialObject.GetType()}}\"),");
+            output.AppendLine($"{Space,16}_ => throw new InvalidOperationException($\"Unknown type. Cannot create wrapper for {{typeof(T)}}\"),");
             output.AppendLine($"{Space,12}}};");
+            output.AppendLine($"{Space,12}return (T)result;");
             output.AppendLine($"{Space,8}}}");
 
             output.AppendLine($"{Space,4}}}");

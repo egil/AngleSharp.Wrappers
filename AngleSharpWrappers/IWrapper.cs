@@ -1,21 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AngleSharp.Dom;
 
 namespace AngleSharpWrappers
 {
     /// <summary>
-    /// Represents a type that can wrap another type.
+    /// Represents a wrapper around an <typeparamref name="TElement"/>.
     /// </summary>
-    public interface IWrapper
-    {
-        bool IsRemoved { get; }
-    }
-
-    /// <inheritdoc/>
-    public interface IWrapper<out T> : IWrapper where T : class
+    public interface IWrapper<out TElement> where TElement : class, INode
     {
         /// <summary>
-        /// Gets the wrapped object.
+        /// Gets the wrapped element.
         /// </summary>
-        T WrappedObject { get; }
+        TElement WrappedElement { get; }
     }
 }

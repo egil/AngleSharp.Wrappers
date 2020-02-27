@@ -13,6 +13,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlImageElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlImageElementWrapper : Wrapper<IHtmlImageElement>, IHtmlImageElement
     {
         /// <summary>

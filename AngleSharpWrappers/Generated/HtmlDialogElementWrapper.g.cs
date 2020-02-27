@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlDialogElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlDialogElementWrapper : Wrapper<IHtmlDialogElement>, IHtmlDialogElement
     {
         /// <summary>

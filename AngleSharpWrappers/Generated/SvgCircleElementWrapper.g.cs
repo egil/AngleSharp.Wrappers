@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="ISvgCircleElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class SvgCircleElementWrapper : Wrapper<ISvgCircleElement>, ISvgCircleElement
     {
         /// <summary>

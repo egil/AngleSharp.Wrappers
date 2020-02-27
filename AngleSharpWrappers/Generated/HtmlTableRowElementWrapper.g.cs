@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlTableRowElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlTableRowElementWrapper : Wrapper<IHtmlTableRowElement>, IHtmlTableRowElement
     {
         /// <summary>

@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlTableHeaderCellElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlTableHeaderCellElementWrapper : Wrapper<IHtmlTableHeaderCellElement>, IHtmlTableHeaderCellElement
     {
         /// <summary>

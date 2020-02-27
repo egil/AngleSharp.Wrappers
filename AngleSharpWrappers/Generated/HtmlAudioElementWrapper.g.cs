@@ -14,6 +14,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlAudioElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlAudioElementWrapper : Wrapper<IHtmlAudioElement>, IHtmlAudioElement
     {
         /// <summary>

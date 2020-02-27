@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlButtonElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlButtonElementWrapper : Wrapper<IHtmlButtonElement>, IHtmlButtonElement
     {
         /// <summary>

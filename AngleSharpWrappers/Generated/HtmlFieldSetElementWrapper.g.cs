@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlFieldSetElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlFieldSetElementWrapper : Wrapper<IHtmlFieldSetElement>, IHtmlFieldSetElement
     {
         /// <summary>

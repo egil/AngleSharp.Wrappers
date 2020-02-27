@@ -11,6 +11,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class ElementWrapper : Wrapper<IElement>, IElement
     {
         /// <summary>

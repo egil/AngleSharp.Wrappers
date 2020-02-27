@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlDataListElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlDataListElementWrapper : Wrapper<IHtmlDataListElement>, IHtmlDataListElement
     {
         /// <summary>

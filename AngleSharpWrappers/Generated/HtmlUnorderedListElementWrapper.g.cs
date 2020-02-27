@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlUnorderedListElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlUnorderedListElementWrapper : Wrapper<IHtmlUnorderedListElement>, IHtmlUnorderedListElement
     {
         /// <summary>

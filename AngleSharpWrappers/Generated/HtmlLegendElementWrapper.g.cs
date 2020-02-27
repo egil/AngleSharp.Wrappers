@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlLegendElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlLegendElementWrapper : Wrapper<IHtmlLegendElement>, IHtmlLegendElement
     {
         /// <summary>

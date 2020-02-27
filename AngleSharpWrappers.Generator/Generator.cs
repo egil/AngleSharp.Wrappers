@@ -71,6 +71,7 @@ namespace AngleSharpWrappers.Generator
             output.AppendLine($"{Space,4}/// <summary>");
             output.AppendLine($"{Space,4}/// Represents a wrapper class around <see cref=\"{name}{genericArgs.Replace('<', '{').Replace('>', '}')}\"/> type.");
             output.AppendLine($"{Space,4}/// </summary>");
+            output.AppendLine($"{Space,4}[DebuggerDisplay(\"{{OuterHtml,nq}}\")]");
             output.AppendLine($"{Space,4}public sealed class {wrapperName}{genericArgs} : Wrapper<{name}{genericArgs}>, {name}{genericArgs}");
             if (!string.IsNullOrEmpty(genericConstraints))
                 output.AppendLine($"{Space,8}{genericConstraints}");

@@ -13,6 +13,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlTrackElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlTrackElementWrapper : Wrapper<IHtmlTrackElement>, IHtmlTrackElement
     {
         /// <summary>

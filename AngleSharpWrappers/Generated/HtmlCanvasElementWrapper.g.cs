@@ -13,6 +13,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlCanvasElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlCanvasElementWrapper : Wrapper<IHtmlCanvasElement>, IHtmlCanvasElement
     {
         /// <summary>

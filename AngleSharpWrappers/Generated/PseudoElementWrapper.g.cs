@@ -11,6 +11,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IPseudoElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class PseudoElementWrapper : Wrapper<IPseudoElement>, IPseudoElement
     {
         /// <summary>

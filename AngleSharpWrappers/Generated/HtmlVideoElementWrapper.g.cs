@@ -14,6 +14,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlVideoElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlVideoElementWrapper : Wrapper<IHtmlVideoElement>, IHtmlVideoElement
     {
         /// <summary>

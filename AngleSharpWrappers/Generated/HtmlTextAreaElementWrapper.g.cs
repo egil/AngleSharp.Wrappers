@@ -12,6 +12,7 @@ namespace AngleSharpWrappers
     /// <summary>
     /// Represents a wrapper class around <see cref="IHtmlTextAreaElement"/> type.
     /// </summary>
+    [DebuggerDisplay("{OuterHtml,nq}")]
     public sealed class HtmlTextAreaElementWrapper : Wrapper<IHtmlTextAreaElement>, IHtmlTextAreaElement
     {
         /// <summary>

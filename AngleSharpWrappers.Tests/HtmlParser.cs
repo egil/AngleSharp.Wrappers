@@ -26,6 +26,7 @@ namespace AngleSharpWrappers
 
         public void Dispose()
         {
+            _context.Dispose();
             _document.Dispose();
         }
     }

@@ -36,7 +36,8 @@ namespace AngleSharpWrappers
 
         public static bool operator ==(Wrapper<TElement> x, TElement y)
         {
-            return x.WrappedElement == y && x.WrappedElement == y;
+            if (x is null) return y is null;
+            return x.WrappedElement == y;
         }
 
         public static bool operator !=(Wrapper<TElement> x, TElement y)
@@ -46,7 +47,8 @@ namespace AngleSharpWrappers
 
         public static bool operator ==(TElement x, Wrapper<TElement> y)
         {
-            return x == y.WrappedElement && x == y.WrappedElement;
+            if (y is null) return x is null;
+            return x == y.WrappedElement;
         }
 
         public static bool operator !=(TElement x, Wrapper<TElement> y)

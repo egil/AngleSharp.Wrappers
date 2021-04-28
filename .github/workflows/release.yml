@@ -1,4 +1,4 @@
-name: NUGET-PACK-PUSH
+ename: release
 
 on:
   workflow_dispatch:
@@ -23,4 +23,4 @@ jobs:
         run: dotnet pack AngleSharpWrappers/ -c Release -o ${GITHUB_WORKSPACE}/lib -p:ContinuousIntegrationBuild=true
         
       - name: Push packages to NuGet.org
-        run: dotnet nuget push ${GITHUB_WORKSPACE}/lib/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push ${GITHUB_WORKSPACE}/lib/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols

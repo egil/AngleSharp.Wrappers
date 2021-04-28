@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <DebugType>Full</DebugType>
-    <IsTestProject>false</IsTestProject>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Egil Hansen</Authors>
     <Company>Egil Hansen</Company>
@@ -11,25 +9,32 @@
     <PackageProjectUrl>https://github.com/egil/AngleSharp.Wrappers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/egil/AngleSharp.Wrappers</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryBranch>#{BRANCH}#</RepositoryBranch>
-    <RepositoryCommit>#{COMMIT}#</RepositoryCommit>
     <PackageId>AngleSharp.Wrappers</PackageId>
     <Description>
-      A library of wrappers for AngleSharp. Allows you to replace a real AngleSharp DOM tree but still keep the queried/returned node references. Built for and used by https://github.com/egil/razor-components-testing-library.
+      A library of wrappers for AngleSharp. Allows you to replace a real AngleSharp DOM tree but still keep the queried/returned node references. Built for and used by https://github.com/bUnit-dev/bUnit.
     </Description>
     <Product>AngleSharp.Wrappers</Product>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../key.snk</AssemblyOriginatorKeyFile>
+		<OutputType>Library</OutputType>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<DebugType>embedded</DebugType>
+		<Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.15.0" />
     <PackageReference Include="AngleSharp.Css" Version="0.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   

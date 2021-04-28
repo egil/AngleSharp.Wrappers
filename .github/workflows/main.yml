@@ -1,34 +1,26 @@
 name: NUGET-PACK-PUSH
 
 on:
-  push:
-    branches:
-      - master
-
-env:
-  BRANCH: "master"
-  COMMIT: ""
+  workflow_dispatch:
 
 jobs:  
   build:
     name: Build and verify library    
     runs-on: ubuntu-latest  
     steps:
-      - name: Setting environment variables
-        run: echo "::set-env name=COMMIT::$GITHUB_SHA"
-      - uses: actions/checkout@v1   
-      - name: Update tokens in project files
-        uses: cschleiden/replace-tokens@v1
-        with:
-          files: '["*.csproj", "**/*.csproj"]'
+      - uses: actions/checkout@v2
+
       - uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.1.100'      
+          dotnet-version: '3.1.x'      
+          
       - name: Building and verifying library
         run: |
           dotnet build -c Release
           dotnet test -c Release
+          
       - name: Creating library package
-        run: dotnet pack AngleSharpWrappers/ -c Release -o ${GITHUB_WORKSPACE}/lib
+        run: dotnet pack AngleSharpWrappers/ -c Release -o ${GITHUB_WORKSPACE}/lib -p:ContinuousIntegrationBuild=true
+        
       - name: Push packages to NuGet.org
         run: dotnet nuget push ${GITHUB_WORKSPACE}/lib/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate

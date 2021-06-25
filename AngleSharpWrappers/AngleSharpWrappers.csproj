@@ -14,7 +14,7 @@
       A library of wrappers for AngleSharp. Allows you to replace a real AngleSharp DOM tree but still keep the queried/returned node references. Built for and used by https://github.com/bUnit-dev/bUnit.
     </Description>
     <Product>AngleSharp.Wrappers</Product>
-    <Version>1.3.0</Version>
+    <Version>2.0.0</Version>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
@@ -30,8 +30,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.15.0" />
-    <PackageReference Include="AngleSharp.Css" Version="0.15.0" />
+    <PackageReference Include="AngleSharp" Version="0.16.0" />
+    <PackageReference Include="AngleSharp.Css" Version="0.16.0" />
   </ItemGroup>
 
   <ItemGroup>

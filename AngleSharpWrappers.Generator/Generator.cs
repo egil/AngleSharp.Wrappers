@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -143,8 +144,6 @@ namespace AngleSharpWrappers.Generator
                 {
                     output.AppendLine();
                     var indexParam = prop.GetIndexParameters().Single();
-                    //var genericReturnType = GetGenericArgsList(prop.PropertyType);
-                    //var paramType = prop.PropertyType;
 
                     var getter = prop.CanRead ? $" get => WrappedElement[{indexParam.Name}];" : " ";
                     var setter = prop.CanWrite ? $" set => WrappedElement[{indexParam.Name}] = value;" : " ";
@@ -162,16 +161,14 @@ namespace AngleSharpWrappers.Generator
             {
                 foreach (var prop in properties.Where(x => x.GetIndexParameters().Length == 0).OrderBy(x => x.Name))
                 {
+                    var nullableAnnotation = IsNullable(prop) ? "?" : "";
                     var propType = GetReturnType(prop.PropertyType);
-                    var genericReturnType = prop.PropertyType.IsGenericType
-                        ? $"<{string.Join(",", prop.PropertyType.GetGenericArguments().Select(x => x.Name))}>"
-                        : string.Empty;
 
                     var getter = prop.CanRead ? $" get => WrappedElement.{prop.Name};" : " ";
                     var setter = prop.CanWrite ? $" set => WrappedElement.{prop.Name} = value;" : " ";
-                    
+
                     output.AppendLine($"{Space,8}[DebuggerHidden]");
-                    output.AppendLine($"{Space,8}public {propType} {prop.Name} {{{getter}{setter}}}");
+                    output.AppendLine($"{Space,8}public {propType}{nullableAnnotation} {prop.Name} {{{getter}{setter}}}");
 
                     yield return prop.PropertyType;
                     foreach (var t in prop.PropertyType.GetGenericArguments()) yield return t;
@@ -189,12 +186,17 @@ namespace AngleSharpWrappers.Generator
             foreach (var method in methods.Where(x => !x.IsSpecialName && x.Name != "GetEnumerator").OrderBy(x => x.Name))
             {
                 var parameters = method.GetParameters();
-                var paramStr = string.Join(", ", parameters.Select(x => $"{GetParamterType(x.ParameterType)} {x.Name}"));
+                var paramStr = string.Join(", ", parameters.Select(x =>
+                {
+                    var nullableAnnotation = IsNullable(x) ? "?" : "";
+                    return $"{GetParamterType(x.ParameterType)}{nullableAnnotation} {x.Name}";
+                }));
                 var argsStr = string.Join(", ", parameters.Select(x => x.Name));
                 var returnType = GetReturnType(method.ReturnType);
+                var nullableAnnotation = IsNullable(method) ? "?" : "";
 
                 output.AppendLine($"{Space,8}[DebuggerHidden]");
-                output.AppendLine($"{Space,8}public {returnType} {method.Name}({paramStr}) => WrappedElement.{method.Name}({argsStr});");
+                output.AppendLine($"{Space,8}public {returnType}{nullableAnnotation} {method.Name}({paramStr}) => WrappedElement.{method.Name}({argsStr});");
 
                 yield return method.ReturnType;
                 foreach (var t in method.ReturnType.GetGenericArguments()) yield return t;
@@ -290,7 +292,7 @@ namespace AngleSharpWrappers.Generator
 
         #region Helpers
 
-        private static Dictionary<string, List<Type>> CreateOrderedNodes(Dictionary<string?, Type> inodes)
+        private static Dictionary<string, List<Type>> CreateOrderedNodes(Dictionary<string, Type> inodes)
         {
             var orderedINodes = inodes.ToDictionary(x => x.Key!, x => new List<Type>());
             foreach (var typeName in orderedINodes.Keys)
@@ -435,6 +437,11 @@ namespace AngleSharpWrappers.Generator
 
         private static string GetParamterType(Type parameterType)
         {
+            if (parameterType.IsGenericType && parameterType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                return GetInterfaceTypeName(parameterType.GetGenericArguments().First());
+            }
+
             var name = GetInterfaceTypeName(parameterType);
             var genericArgs = GetGenericArgsList(parameterType);
             return $"{name}{genericArgs}";
@@ -473,6 +480,70 @@ namespace AngleSharpWrappers.Generator
             var wrapperName = GetWrapperClassName(type);
             Console.WriteLine($"Writing {wrapperName}.g.cs");
             File.WriteAllText($"{wrapperName}.g.cs", output.ToString());
+        }
+
+
+        public static bool IsNullable(PropertyInfo property) =>
+            IsNullableHelper(property.PropertyType, property.DeclaringType, property.CustomAttributes);
+
+        public static bool IsNullable(FieldInfo field) =>
+            IsNullableHelper(field.FieldType, field.DeclaringType, field.CustomAttributes);
+
+        public static bool IsNullable(ParameterInfo parameter) =>
+            IsNullableHelper(parameter.ParameterType, parameter.Member, parameter.CustomAttributes);
+
+        public static bool IsNullable(MethodInfo method)
+        {
+            var breakHere = method.Name.Equals("GetAttribute");
+
+            var nullable = method.ReturnTypeCustomAttributes.GetCustomAttributes(false)
+                .Where(x => x.GetType().FullName == "System.Runtime.CompilerServices.NullableAttribute")
+                .FirstOrDefault();
+
+            if (nullable is null)
+                return false;
+            else
+                return true;
+        }
+
+        private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)
+        {
+            if (memberType.IsValueType)
+                return Nullable.GetUnderlyingType(memberType) != null;
+
+            var nullable = customAttributes
+                .FirstOrDefault(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.NullableAttribute");
+            if (nullable != null && nullable.ConstructorArguments.Count == 1)
+            {
+                var attributeArgument = nullable.ConstructorArguments[0];
+                if (attributeArgument.ArgumentType == typeof(byte[]))
+                {
+                    var args = (ReadOnlyCollection<CustomAttributeTypedArgument>)attributeArgument.Value!;
+                    if (args.Count > 0 && args[0].ArgumentType == typeof(byte))
+                    {
+                        return (byte)args[0].Value! == 2;
+                    }
+                }
+                else if (attributeArgument.ArgumentType == typeof(byte))
+                {
+                    return (byte)attributeArgument.Value! == 2;
+                }
+            }
+
+            for (var type = declaringType; type != null; type = type.DeclaringType)
+            {
+                var context = type.CustomAttributes
+                    .FirstOrDefault(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.NullableContextAttribute");
+                if (context != null &&
+                    context.ConstructorArguments.Count == 1 &&
+                    context.ConstructorArguments[0].ArgumentType == typeof(byte))
+                {
+                    return (byte)context.ConstructorArguments[0].Value! == 2;
+                }
+            }
+
+            // Couldn't find a suitable attribute
+            return false;
         }
 
         #endregion

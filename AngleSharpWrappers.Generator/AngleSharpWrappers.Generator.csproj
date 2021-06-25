@@ -3,13 +3,16 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <DebugType>Full</DebugType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp.Css" Version="0.13.0" />
+    <PackageReference Include="AngleSharp.Css" Version="0.16.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.VisualC" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

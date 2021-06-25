@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <DebugType>Full</DebugType>
     <RootNamespace>AngleSharpWrappers</RootNamespace>
     <IsTestProject>true</IsTestProject>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="AngleSharp.Css" Version="0.13.0" />-->
     <PackageReference Include="coverlet.collector" Version="1.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

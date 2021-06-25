@@ -84,25 +84,25 @@ namespace AngleSharpWrappers
 
         #region Properties and indexers
         [DebuggerHidden]
-        public String Accept { get => WrappedElement.Accept; set => WrappedElement.Accept = value;}
+        public String? Accept { get => WrappedElement.Accept; set => WrappedElement.Accept = value;}
         [DebuggerHidden]
-        public String AccessKey { get => WrappedElement.AccessKey; set => WrappedElement.AccessKey = value;}
+        public String? AccessKey { get => WrappedElement.AccessKey; set => WrappedElement.AccessKey = value;}
         [DebuggerHidden]
-        public String AccessKeyLabel { get => WrappedElement.AccessKeyLabel; }
+        public String? AccessKeyLabel { get => WrappedElement.AccessKeyLabel; }
         [DebuggerHidden]
-        public String AlternativeText { get => WrappedElement.AlternativeText; set => WrappedElement.AlternativeText = value;}
+        public String? AlternativeText { get => WrappedElement.AlternativeText; set => WrappedElement.AlternativeText = value;}
         [DebuggerHidden]
-        public IElement AssignedSlot { get => WrappedElement.AssignedSlot; }
+        public IElement? AssignedSlot { get => WrappedElement.AssignedSlot; }
         [DebuggerHidden]
         public INamedNodeMap Attributes { get => WrappedElement.Attributes; }
         [DebuggerHidden]
-        public String Autocomplete { get => WrappedElement.Autocomplete; set => WrappedElement.Autocomplete = value;}
+        public String? Autocomplete { get => WrappedElement.Autocomplete; set => WrappedElement.Autocomplete = value;}
         [DebuggerHidden]
         public Boolean Autofocus { get => WrappedElement.Autofocus; set => WrappedElement.Autofocus = value;}
         [DebuggerHidden]
         public String BaseUri { get => WrappedElement.BaseUri; }
         [DebuggerHidden]
-        public Url BaseUrl { get => WrappedElement.BaseUrl; }
+        public Url? BaseUrl { get => WrappedElement.BaseUrl; }
         [DebuggerHidden]
         public Int32 ChildElementCount { get => WrappedElement.ChildElementCount; }
         [DebuggerHidden]
@@ -112,19 +112,19 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public ITokenList ClassList { get => WrappedElement.ClassList; }
         [DebuggerHidden]
-        public String ClassName { get => WrappedElement.ClassName; set => WrappedElement.ClassName = value;}
+        public String? ClassName { get => WrappedElement.ClassName; set => WrappedElement.ClassName = value;}
         [DebuggerHidden]
-        public String ContentEditable { get => WrappedElement.ContentEditable; set => WrappedElement.ContentEditable = value;}
+        public String? ContentEditable { get => WrappedElement.ContentEditable; set => WrappedElement.ContentEditable = value;}
         [DebuggerHidden]
-        public IHtmlMenuElement ContextMenu { get => WrappedElement.ContextMenu; set => WrappedElement.ContextMenu = value;}
+        public IHtmlMenuElement? ContextMenu { get => WrappedElement.ContextMenu; set => WrappedElement.ContextMenu = value;}
         [DebuggerHidden]
         public IStringMap Dataset { get => WrappedElement.Dataset; }
         [DebuggerHidden]
         public String DefaultValue { get => WrappedElement.DefaultValue; set => WrappedElement.DefaultValue = value;}
         [DebuggerHidden]
-        public String Direction { get => WrappedElement.Direction; set => WrappedElement.Direction = value;}
+        public String? Direction { get => WrappedElement.Direction; set => WrappedElement.Direction = value;}
         [DebuggerHidden]
-        public String DirectionName { get => WrappedElement.DirectionName; set => WrappedElement.DirectionName = value;}
+        public String? DirectionName { get => WrappedElement.DirectionName; set => WrappedElement.DirectionName = value;}
         [DebuggerHidden]
         public Int32 DisplayHeight { get => WrappedElement.DisplayHeight; set => WrappedElement.DisplayHeight = value;}
         [DebuggerHidden]
@@ -132,17 +132,17 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public ISettableTokenList DropZone { get => WrappedElement.DropZone; }
         [DebuggerHidden]
-        public IFileList Files { get => WrappedElement.Files; }
+        public IFileList? Files { get => WrappedElement.Files; }
         [DebuggerHidden]
-        public INode FirstChild { get => WrappedElement.FirstChild; }
+        public INode? FirstChild { get => WrappedElement.FirstChild; }
         [DebuggerHidden]
-        public IElement FirstElementChild { get => WrappedElement.FirstElementChild; }
+        public IElement? FirstElementChild { get => WrappedElement.FirstElementChild; }
         [DebuggerHidden]
         public NodeFlags Flags { get => WrappedElement.Flags; }
         [DebuggerHidden]
-        public IHtmlFormElement Form { get => WrappedElement.Form; }
+        public IHtmlFormElement? Form { get => WrappedElement.Form; }
         [DebuggerHidden]
-        public String FormAction { get => WrappedElement.FormAction; set => WrappedElement.FormAction = value;}
+        public String? FormAction { get => WrappedElement.FormAction; set => WrappedElement.FormAction = value;}
         [DebuggerHidden]
         public String FormEncType { get => WrappedElement.FormEncType; set => WrappedElement.FormEncType = value;}
         [DebuggerHidden]
@@ -150,13 +150,13 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public Boolean FormNoValidate { get => WrappedElement.FormNoValidate; set => WrappedElement.FormNoValidate = value;}
         [DebuggerHidden]
-        public String FormTarget { get => WrappedElement.FormTarget; set => WrappedElement.FormTarget = value;}
+        public String? FormTarget { get => WrappedElement.FormTarget; set => WrappedElement.FormTarget = value;}
         [DebuggerHidden]
         public Boolean HasChildNodes { get => WrappedElement.HasChildNodes; }
         [DebuggerHidden]
         public Boolean HasValue { get => WrappedElement.HasValue; }
         [DebuggerHidden]
-        public String Id { get => WrappedElement.Id; set => WrappedElement.Id = value;}
+        public String? Id { get => WrappedElement.Id; set => WrappedElement.Id = value;}
         [DebuggerHidden]
         public String InnerHtml { get => WrappedElement.InnerHtml; set => WrappedElement.InnerHtml = value;}
         [DebuggerHidden]
@@ -188,31 +188,31 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public INodeList Labels { get => WrappedElement.Labels; }
         [DebuggerHidden]
-        public String Language { get => WrappedElement.Language; set => WrappedElement.Language = value;}
+        public String? Language { get => WrappedElement.Language; set => WrappedElement.Language = value;}
         [DebuggerHidden]
-        public INode LastChild { get => WrappedElement.LastChild; }
+        public INode? LastChild { get => WrappedElement.LastChild; }
         [DebuggerHidden]
-        public IElement LastElementChild { get => WrappedElement.LastElementChild; }
+        public IElement? LastElementChild { get => WrappedElement.LastElementChild; }
         [DebuggerHidden]
-        public IHtmlDataListElement List { get => WrappedElement.List; }
+        public IHtmlDataListElement? List { get => WrappedElement.List; }
         [DebuggerHidden]
         public String LocalName { get => WrappedElement.LocalName; }
         [DebuggerHidden]
-        public String Maximum { get => WrappedElement.Maximum; set => WrappedElement.Maximum = value;}
+        public String? Maximum { get => WrappedElement.Maximum; set => WrappedElement.Maximum = value;}
         [DebuggerHidden]
         public Int32 MaxLength { get => WrappedElement.MaxLength; set => WrappedElement.MaxLength = value;}
         [DebuggerHidden]
-        public String Minimum { get => WrappedElement.Minimum; set => WrappedElement.Minimum = value;}
+        public String? Minimum { get => WrappedElement.Minimum; set => WrappedElement.Minimum = value;}
         [DebuggerHidden]
         public Int32 MinLength { get => WrappedElement.MinLength; set => WrappedElement.MinLength = value;}
         [DebuggerHidden]
-        public String Name { get => WrappedElement.Name; set => WrappedElement.Name = value;}
+        public String? Name { get => WrappedElement.Name; set => WrappedElement.Name = value;}
         [DebuggerHidden]
-        public String NamespaceUri { get => WrappedElement.NamespaceUri; }
+        public String? NamespaceUri { get => WrappedElement.NamespaceUri; }
         [DebuggerHidden]
-        public IElement NextElementSibling { get => WrappedElement.NextElementSibling; }
+        public IElement? NextElementSibling { get => WrappedElement.NextElementSibling; }
         [DebuggerHidden]
-        public INode NextSibling { get => WrappedElement.NextSibling; }
+        public INode? NextSibling { get => WrappedElement.NextSibling; }
         [DebuggerHidden]
         public String NodeName { get => WrappedElement.NodeName; }
         [DebuggerHidden]
@@ -222,39 +222,39 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public String OuterHtml { get => WrappedElement.OuterHtml; set => WrappedElement.OuterHtml = value;}
         [DebuggerHidden]
-        public IDocument Owner { get => WrappedElement.Owner; }
+        public IDocument? Owner { get => WrappedElement.Owner; }
         [DebuggerHidden]
-        public INode Parent { get => WrappedElement.Parent; }
+        public INode? Parent { get => WrappedElement.Parent; }
         [DebuggerHidden]
-        public IElement ParentElement { get => WrappedElement.ParentElement; }
+        public IElement? ParentElement { get => WrappedElement.ParentElement; }
         [DebuggerHidden]
-        public String Pattern { get => WrappedElement.Pattern; set => WrappedElement.Pattern = value;}
+        public String? Pattern { get => WrappedElement.Pattern; set => WrappedElement.Pattern = value;}
         [DebuggerHidden]
-        public String Placeholder { get => WrappedElement.Placeholder; set => WrappedElement.Placeholder = value;}
+        public String? Placeholder { get => WrappedElement.Placeholder; set => WrappedElement.Placeholder = value;}
         [DebuggerHidden]
-        public String Prefix { get => WrappedElement.Prefix; }
+        public String? Prefix { get => WrappedElement.Prefix; }
         [DebuggerHidden]
-        public IElement PreviousElementSibling { get => WrappedElement.PreviousElementSibling; }
+        public IElement? PreviousElementSibling { get => WrappedElement.PreviousElementSibling; }
         [DebuggerHidden]
-        public INode PreviousSibling { get => WrappedElement.PreviousSibling; }
+        public INode? PreviousSibling { get => WrappedElement.PreviousSibling; }
         [DebuggerHidden]
-        public String SelectionDirection { get => WrappedElement.SelectionDirection; }
+        public String? SelectionDirection { get => WrappedElement.SelectionDirection; }
         [DebuggerHidden]
         public Int32 SelectionEnd { get => WrappedElement.SelectionEnd; set => WrappedElement.SelectionEnd = value;}
         [DebuggerHidden]
         public Int32 SelectionStart { get => WrappedElement.SelectionStart; set => WrappedElement.SelectionStart = value;}
         [DebuggerHidden]
-        public IShadowRoot ShadowRoot { get => WrappedElement.ShadowRoot; }
+        public IShadowRoot? ShadowRoot { get => WrappedElement.ShadowRoot; }
         [DebuggerHidden]
         public Int32 Size { get => WrappedElement.Size; set => WrappedElement.Size = value;}
         [DebuggerHidden]
-        public String Slot { get => WrappedElement.Slot; set => WrappedElement.Slot = value;}
+        public String? Slot { get => WrappedElement.Slot; set => WrappedElement.Slot = value;}
         [DebuggerHidden]
-        public String Source { get => WrappedElement.Source; set => WrappedElement.Source = value;}
+        public String? Source { get => WrappedElement.Source; set => WrappedElement.Source = value;}
         [DebuggerHidden]
-        public ISourceReference SourceReference { get => WrappedElement.SourceReference; }
+        public ISourceReference? SourceReference { get => WrappedElement.SourceReference; }
         [DebuggerHidden]
-        public String Step { get => WrappedElement.Step; set => WrappedElement.Step = value;}
+        public String? Step { get => WrappedElement.Step; set => WrappedElement.Step = value;}
         [DebuggerHidden]
         public Int32 TabIndex { get => WrappedElement.TabIndex; set => WrappedElement.TabIndex = value;}
         [DebuggerHidden]
@@ -262,17 +262,17 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public String TextContent { get => WrappedElement.TextContent; set => WrappedElement.TextContent = value;}
         [DebuggerHidden]
-        public String Title { get => WrappedElement.Title; set => WrappedElement.Title = value;}
+        public String? Title { get => WrappedElement.Title; set => WrappedElement.Title = value;}
         [DebuggerHidden]
         public String Type { get => WrappedElement.Type; set => WrappedElement.Type = value;}
         [DebuggerHidden]
-        public String ValidationMessage { get => WrappedElement.ValidationMessage; }
+        public String? ValidationMessage { get => WrappedElement.ValidationMessage; }
         [DebuggerHidden]
         public IValidityState Validity { get => WrappedElement.Validity; }
         [DebuggerHidden]
         public String Value { get => WrappedElement.Value; set => WrappedElement.Value = value;}
         [DebuggerHidden]
-        public Nullable<DateTime> ValueAsDate { get => WrappedElement.ValueAsDate; set => WrappedElement.ValueAsDate = value;}
+        public DateTime? ValueAsDate { get => WrappedElement.ValueAsDate; set => WrappedElement.ValueAsDate = value;}
         [DebuggerHidden]
         public Double ValueAsNumber { get => WrappedElement.ValueAsNumber; set => WrappedElement.ValueAsNumber = value;}
         [DebuggerHidden]
@@ -281,7 +281,7 @@ namespace AngleSharpWrappers
 
         #region Methods
         [DebuggerHidden]
-        public void AddEventListener(String type, DomEventHandler callback, Boolean capture) => WrappedElement.AddEventListener(type, callback, capture);
+        public void AddEventListener(String type, DomEventHandler? callback, Boolean capture) => WrappedElement.AddEventListener(type, callback, capture);
         [DebuggerHidden]
         public void After(INode[] nodes) => WrappedElement.After(nodes);
         [DebuggerHidden]
@@ -297,7 +297,7 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public INode Clone(Boolean deep) => WrappedElement.Clone(deep);
         [DebuggerHidden]
-        public IElement Closest(String selectors) => WrappedElement.Closest(selectors);
+        public IElement? Closest(String selectors) => WrappedElement.Closest(selectors);
         [DebuggerHidden]
         public DocumentPositions CompareDocumentPosition(INode otherNode) => WrappedElement.CompareDocumentPosition(otherNode);
         [DebuggerHidden]
@@ -315,9 +315,9 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public Boolean Equals(INode otherNode) => WrappedElement.Equals(otherNode);
         [DebuggerHidden]
-        public String GetAttribute(String name) => WrappedElement.GetAttribute(name);
+        public String? GetAttribute(String name) => WrappedElement.GetAttribute(name);
         [DebuggerHidden]
-        public String GetAttribute(String namespaceUri, String localName) => WrappedElement.GetAttribute(namespaceUri, localName);
+        public String? GetAttribute(String? namespaceUri, String localName) => WrappedElement.GetAttribute(namespaceUri, localName);
         [DebuggerHidden]
         public IHtmlCollection<IElement> GetElementsByClassName(String classNames) => WrappedElement.GetElementsByClassName(classNames);
         [DebuggerHidden]
@@ -327,19 +327,19 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public Boolean HasAttribute(String name) => WrappedElement.HasAttribute(name);
         [DebuggerHidden]
-        public Boolean HasAttribute(String namespaceUri, String localName) => WrappedElement.HasAttribute(namespaceUri, localName);
+        public Boolean HasAttribute(String? namespaceUri, String localName) => WrappedElement.HasAttribute(namespaceUri, localName);
         [DebuggerHidden]
         public void Insert(AdjacentPosition position, String html) => WrappedElement.Insert(position, html);
         [DebuggerHidden]
-        public INode InsertBefore(INode newElement, INode referenceElement) => WrappedElement.InsertBefore(newElement, referenceElement);
+        public INode InsertBefore(INode newElement, INode? referenceElement) => WrappedElement.InsertBefore(newElement, referenceElement);
         [DebuggerHidden]
         public void InvokeEventListener(Event ev) => WrappedElement.InvokeEventListener(ev);
         [DebuggerHidden]
         public Boolean IsDefaultNamespace(String namespaceUri) => WrappedElement.IsDefaultNamespace(namespaceUri);
         [DebuggerHidden]
-        public String LookupNamespaceUri(String prefix) => WrappedElement.LookupNamespaceUri(prefix);
+        public String? LookupNamespaceUri(String prefix) => WrappedElement.LookupNamespaceUri(prefix);
         [DebuggerHidden]
-        public String LookupPrefix(String namespaceUri) => WrappedElement.LookupPrefix(namespaceUri);
+        public String? LookupPrefix(String namespaceUri) => WrappedElement.LookupPrefix(namespaceUri);
         [DebuggerHidden]
         public Boolean Matches(String selectors) => WrappedElement.Matches(selectors);
         [DebuggerHidden]
@@ -347,7 +347,7 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public void Prepend(INode[] nodes) => WrappedElement.Prepend(nodes);
         [DebuggerHidden]
-        public IElement QuerySelector(String selectors) => WrappedElement.QuerySelector(selectors);
+        public IElement? QuerySelector(String selectors) => WrappedElement.QuerySelector(selectors);
         [DebuggerHidden]
         public IHtmlCollection<IElement> QuerySelectorAll(String selectors) => WrappedElement.QuerySelectorAll(selectors);
         [DebuggerHidden]
@@ -359,13 +359,13 @@ namespace AngleSharpWrappers
         [DebuggerHidden]
         public INode RemoveChild(INode child) => WrappedElement.RemoveChild(child);
         [DebuggerHidden]
-        public void RemoveEventListener(String type, DomEventHandler callback, Boolean capture) => WrappedElement.RemoveEventListener(type, callback, capture);
+        public void RemoveEventListener(String type, DomEventHandler? callback, Boolean capture) => WrappedElement.RemoveEventListener(type, callback, capture);
         [DebuggerHidden]
         public void Replace(INode[] nodes) => WrappedElement.Replace(nodes);
         [DebuggerHidden]
         public INode ReplaceChild(INode newChild, INode oldChild) => WrappedElement.ReplaceChild(newChild, oldChild);
         [DebuggerHidden]
-        public void Select(Int32 selectionStart, Int32 selectionEnd, String selectionDirection) => WrappedElement.Select(selectionStart, selectionEnd, selectionDirection);
+        public void Select(Int32 selectionStart, Int32 selectionEnd, String? selectionDirection) => WrappedElement.Select(selectionStart, selectionEnd, selectionDirection);
         [DebuggerHidden]
         public void SelectAll() => WrappedElement.SelectAll();
         [DebuggerHidden]

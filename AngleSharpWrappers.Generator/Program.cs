@@ -6,11 +6,11 @@ namespace AngleSharpWrappers.Generator
     {
         static void Main()
         {
-            while (!Directory.GetCurrentDirectory().EndsWith("AngleSharpWrappers.Generator", System.StringComparison.Ordinal))            
+            while (!Directory.GetCurrentDirectory().EndsWith("AngleSharpWrappers.Generator", System.StringComparison.Ordinal))
             {
                 Directory.SetCurrentDirectory("..");
             }
-            Directory.SetCurrentDirectory(@"..\AngleSharpWrappers\Generated");
+            Directory.SetCurrentDirectory(@"../AngleSharpWrappers/Generated");
 
             var _ = new Generator();
         }

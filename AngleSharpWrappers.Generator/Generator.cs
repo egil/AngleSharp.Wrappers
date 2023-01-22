@@ -2,18 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
-using AngleSharp;
-using AngleSharp.Common;
 using AngleSharp.Dom;
-using AngleSharp.Svg.Dom;
-using AngleSharp.Text;
 
 namespace AngleSharpWrappers.Generator
 {
@@ -21,6 +14,7 @@ namespace AngleSharpWrappers.Generator
     {
         private const char Space = ' ';
         private static readonly Type WrapTargetType = typeof(IElement);
+        private static readonly NullabilityInfoContext NullabilityInfoContext = new();
 
         private Dictionary<string, Type> WrappedTypes { get; }
 
@@ -113,6 +107,7 @@ namespace AngleSharpWrappers.Generator
                     ? $"(({evt.DeclaringType!.Name})WrappedElement)"
                     : "WrappedElement";
 
+                output.AppendLine($"{Space,8}/// <inheritdoc/>");
                 output.AppendLine($"{Space,8}public event {evtType} {evt.Name} {{ add => {castType}.{evt.Name} += value; remove => {castType}.{evt.Name} -= value; }}");
 
                 if (evt.DeclaringType is { })
@@ -149,6 +144,7 @@ namespace AngleSharpWrappers.Generator
                     var setter = prop.CanWrite ? $" set => WrappedElement[{indexParam.Name}] = value;" : " ";
                     var idxTypeName = GetReturnType(indexParam.ParameterType);
 
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
                     output.AppendLine($"{Space,8}[DebuggerHidden]");
                     output.AppendLine($"{Space,8}public {GetReturnType(prop.PropertyType)} this[{idxTypeName} {indexParam.Name}] {{{getter}{setter}}}");
 
@@ -167,6 +163,7 @@ namespace AngleSharpWrappers.Generator
                     var getter = prop.CanRead ? $" get => WrappedElement.{prop.Name};" : " ";
                     var setter = prop.CanWrite ? $" set => WrappedElement.{prop.Name} = value;" : " ";
 
+                    output.AppendLine($"{Space,8}/// <inheritdoc/>");
                     output.AppendLine($"{Space,8}[DebuggerHidden]");
                     output.AppendLine($"{Space,8}public {propType}{nullableAnnotation} {prop.Name} {{{getter}{setter}}}");
 
@@ -195,6 +192,7 @@ namespace AngleSharpWrappers.Generator
                 var returnType = GetReturnType(method.ReturnType);
                 var nullableAnnotation = IsNullable(method) ? "?" : "";
 
+                output.AppendLine($"{Space,8}/// <inheritdoc/>");
                 output.AppendLine($"{Space,8}[DebuggerHidden]");
                 output.AppendLine($"{Space,8}public {returnType}{nullableAnnotation} {method.Name}({paramStr}) => WrappedElement.{method.Name}({argsStr});");
 
@@ -256,7 +254,7 @@ namespace AngleSharpWrappers.Generator
             output.AppendLine($"{Space,8}/// Wraps an <see cref=\"IElement\"/> in the wrapper specific to it.");
             output.AppendLine($"{Space,8}/// </summary>");
             output.AppendLine($"{Space,8}/// <typeparam name=\"T\">The element type.</typeparam>");
-            output.AppendLine($"{Space,8}/// <param name=\"elementFactory\">The factory that provides the wrapped element.</param>");
+            output.AppendLine($"{Space,8}/// <param name=\"factory\">The factory that provides the wrapped element.</param>");
             output.AppendLine($"{Space,8}/// <returns>The wrapped <see cref=\"IElement\"/>.</returns>");
             output.AppendLine($"{Space,8}public static T Create<T>(IElementFactory<T> factory) where T : class, INode");
             output.AppendLine($"{Space,8}{{");
@@ -496,14 +494,11 @@ namespace AngleSharpWrappers.Generator
         {
             var breakHere = method.Name.Equals("GetAttribute");
 
-            var nullable = method.ReturnTypeCustomAttributes.GetCustomAttributes(false)
-                .Where(x => x.GetType().FullName == "System.Runtime.CompilerServices.NullableAttribute")
-                .FirstOrDefault();
+            var nullabilityInfo = NullabilityInfoContext.Create(method.ReturnParameter);
+            var nullabilityInfoWriteState = nullabilityInfo.WriteState;
+            var nullable = nullabilityInfoWriteState is NullabilityState.Nullable;
 
-            if (nullable is null)
-                return false;
-            else
-                return true;
+            return nullable;
         }
 
         private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)

@@ -3,15 +3,15 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <DebugType>Full</DebugType>
-    <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>
     <Nullable>annotations</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp.Css" Version="0.16.0" />
+    <PackageReference Include="AngleSharp" Version="1.0.1" />
     <PackageReference Include="System.Runtime.CompilerServices.VisualC" Version="4.3.0" />
   </ItemGroup>
 
